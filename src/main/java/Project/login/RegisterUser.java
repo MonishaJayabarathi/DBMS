@@ -7,11 +7,13 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 
 public class RegisterUser {
-    public boolean register(String username, String password) throws IOException {
+    public boolean register(String[] credential) throws IOException {
 
+        String username=credential[0];
+        String password=credential[1];
         // user object null
         if (username == null || password==null) {
-            System.out.println("username or password is nulln Please re-Enter user details");
+            System.out.println("username or password is null Please re-Enter user details");
             return false;
         }
         FileReader fr = new FileReader("E:\\1st term (DAl)\\Adv Database\\Project_DB\\input.txt");
@@ -25,8 +27,8 @@ public class RegisterUser {
             {
                 if (word.equals(username))   //Search for the given word
                 {
-                    System.out.println("user already registered\nPlease log in");
-                    return false;//If Present increase the count by one
+                    System.out.println("user already registered");
+                    return false;
                 }
             }
         }
