@@ -36,7 +36,7 @@ public class App
         values.add("V1");
         values.add("V2");
         tb.insert("Test1","aditya","Test",columns,values);
-        tb.insert("Test2","aditya","Test",columns,values);
+//        tb.insert("Test2","aditya","Test",columns,values);
 
     }
 }

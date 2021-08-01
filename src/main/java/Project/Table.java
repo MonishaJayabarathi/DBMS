@@ -47,11 +47,16 @@ public class Table {
     // Assuming user will send columnNames along with the query in correct order
     // If column Names are not present send back the error
     // Assuming that user will send all columns
+    // Assuming table exist
 
     //TODO: Check for primary key
     if(columns != null){
       File tableFile = new File(LOCAL_PATH+databaseName+"/"+tableName+".txt");
       FileWriter tableFileWriter = new FileWriter(tableFile,true);
+      if(!tableFile.exists()){
+        System.out.println("Table Doesn't exist");
+        return;
+      }
       for(int i = 0;i < columns.size(); i++){
         tableFileWriter.append(columns.get(i));
         tableFileWriter.append(" ");
