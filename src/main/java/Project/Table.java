@@ -75,7 +75,5 @@ public class Table {
     return false;
   }
 
-
-
 //  public void select
 }
