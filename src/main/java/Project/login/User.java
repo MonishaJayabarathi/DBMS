@@ -8,6 +8,7 @@ public class User {
     String[] userCredential= new String[2];
     public String[] userDetails(){
 
+        System.out.println("Enter credential for user");
         RegisterUser user= new RegisterUser();
         Scanner sc=new Scanner(System.in);
         System.out.println("Enter email-id:");
