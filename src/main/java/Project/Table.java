@@ -6,7 +6,7 @@ import static Project.Constants.LOCAL_PATH;
 
 public class Table {
 
-  public void create(String tableName, String userName, String databaseName, ArrayList<String> columns, ArrayList<String> valuesTypes){
+  public boolean create(String tableName, String userName, String databaseName, ArrayList<String> columns, ArrayList<String> valuesTypes){
     // Creating Data dict. inside the database folder
     try{
       File dataDict = new File(LOCAL_PATH+databaseName+"/dataDictionary.txt");
@@ -38,12 +38,15 @@ public class Table {
     try{
       File tableFile = new File(LOCAL_PATH+databaseName+"/"+tableName+".txt");
       tableFile.createNewFile();
+      return true;
     } catch (IOException e) {
       e.printStackTrace();
+      return false;
     }
+
   }
 
-  public void insert(String tableName, String userName, String databaseName, ArrayList<String> columns, ArrayList<String> values) throws IOException {
+  public boolean insert(String tableName, String userName, String databaseName, ArrayList<String> columns, ArrayList<String> values) throws IOException {
     // Assuming user will send columnNames along with the query in correct order
     // If column Names are not present send back the error
     // Assuming that user will send all columns
@@ -55,7 +58,7 @@ public class Table {
       FileWriter tableFileWriter = new FileWriter(tableFile,true);
       if(!tableFile.exists()){
         System.out.println("Table Doesn't exist");
-        return;
+        return false;
       }
       for(int i = 0;i < columns.size(); i++){
         tableFileWriter.append(columns.get(i));
@@ -65,9 +68,14 @@ public class Table {
       }
       tableFileWriter.append("\n");
       tableFileWriter.close();
+
+      return true;
     }
 
+    return false;
   }
+
+
 
 //  public void select
 }
