@@ -14,8 +14,9 @@ public class App
         System.out.println( "Hello World!" );
         Table tb = new Table();
 //        // Test Create Database
-//        DataBase db = new DataBase();
+        DataBase db = new DataBase();
 //        db.create("Test");
+        db.use("Test");
 
         // Test Create table
 
@@ -23,22 +24,26 @@ public class App
 //        columns.add("C1");
 //        columns.add("C2");
 //        ArrayList<String> valuesTypes = new ArrayList<>();
-//        valuesTypes.add("int PK");
+//        valuesTypes.add("int");
 //        valuesTypes.add("char");
 //        tb.create("Test1","aditya","Test",columns,valuesTypes);
 //        tb.create("Test2","aditya","Test",columns,valuesTypes);
 
-//        Test Insert into Database
-        ArrayList<String> columns = new ArrayList<>();
-        columns.add("C1");
-        columns.add("C2");
-        ArrayList<String> values = new ArrayList<>();
-        values.add("V1");
-        values.add("V2");
+////        Test Insert into Database
+//        ArrayList<String> columns = new ArrayList<>();
+//        columns.add("C1");
+//        columns.add("C2");
+//        ArrayList<String> values = new ArrayList<>();
+//        values.add("V1");
+//        values.add("V2");
 //        tb.insert("Test1","aditya","Test",columns,values);
-//        tb.insert("Test2","aditya","Test",columns,values);
-        tb.select("Test1","aditya","Test",columns,values);
-        tb.erd("Test1","aditya","Test",columns,values);
+////        tb.insert("Test2","aditya","Test",columns,values);
+
+
+//        Create Query PARSER TEST
+        QueryParser qp = new QueryParser();
+        String CREATE_QUERY = "CREATE TABLE ADITYA (COL1 char,COL3 int);";
+        qp.parseQuery(db.currentDatabase, CREATE_QUERY);
 
     }
 }
