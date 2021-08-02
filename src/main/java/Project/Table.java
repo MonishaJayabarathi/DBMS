@@ -123,8 +123,7 @@ public class Table {
 
     return false;
   }
-
-<<<<<<< src/main/java/Project/Table.java
+  
   /**
    * This method displays the selected columns orr all(*) values in a table.
    * It can handle simple WHERE clause like WHERE col1=value
