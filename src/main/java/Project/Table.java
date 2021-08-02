@@ -55,16 +55,30 @@ public class Table {
     return temp;
   }
 
-  public boolean create(String tableName, String userName, String databaseName, ArrayList<String> columns, ArrayList<String> valuesTypes) {
+  public String getPrimaryKeyColumn(String dbName, String tableName) throws IOException {
+    String finalCol = "test";
+    File dataDict = new File(LOCAL_PATH + dbName + "/dataDictionary.txt");
+    BufferedReader dataDictReader = new BufferedReader(new FileReader(dataDict));
+    String st;
+    while ((st = dataDictReader.readLine()) != null){
+
+    }
+
+    return finalCol;
+  }
+
+  public boolean create(String tableName, String userName, String databaseName, ArrayList<String> columns, ArrayList<String> valuesTypes,HashMap<String,String> keySet) {
     // Creating Data dict. inside the database folder
     try {
       File dataDict = new File(LOCAL_PATH + databaseName + "/dataDictionary.txt");
-      FileWriter dataDictWriter = new FileWriter(dataDict, true);
 
       // Let's check first if this file exist in database or not
       if (dataDict.createNewFile()) {
         System.out.println("Created new Data dictionary for database " + databaseName);
       }
+
+      FileWriter dataDictWriter = new FileWriter(dataDict, true);
+
 
       // Assumption that this table does not exist
       dataDictWriter.append(tableName);
@@ -75,6 +89,10 @@ public class Table {
         dataDictWriter.append(columns.get(i));
         dataDictWriter.append(" ");
         dataDictWriter.append(valuesTypes.get(i));
+        if(keySet.containsKey(columns.get(i))){
+          dataDictWriter.append(" ");
+          dataDictWriter.append(keySet.get(columns.get(i)));
+        }
         dataDictWriter.append("\n");
       }
       dataDictWriter.append("\n");
@@ -102,6 +120,7 @@ public class Table {
     // Assuming table exist
 
     //TODO: Check for primary key
+
     if (columns != null) {
       File tableFile = new File(LOCAL_PATH + databaseName + "/" + tableName + ".txt");
       FileWriter tableFileWriter = new FileWriter(tableFile, true);
