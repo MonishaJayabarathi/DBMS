@@ -42,9 +42,9 @@ public class QueryParser {
       values.add((colVal.split(" ")[1]).strip());
     }
 
+    //TODO: Add logs here only
     boolean status = tb.create(tableName,"DUMMY",dbName,columns,values);
 
-    System.out.println(columns.toString());
-    System.out.println(values.toString());
+    System.out.println(status);
   }
 }

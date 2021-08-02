@@ -6,3 +6,7 @@ Test2
 C1 int
 C2 char
 
+ADITYA
+COL1 char
+COL3 int
+
