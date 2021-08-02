@@ -158,7 +158,10 @@ public class QueryParser {
 
   //TODO: DUMPS and take back DUMPS and transaction
   public void selectWrapper(String dbName, Matcher queryMatcher){
-
+    System.out.println(queryMatcher.group(1));
+    System.out.println(queryMatcher.group(2));
+    System.out.println(queryMatcher.group(3));
+    System.out.println(queryMatcher.group(4));
   }
   public void updateWrapper(String dbName,
                             Matcher updateQueryMatcher) throws IOException {

@@ -43,8 +43,8 @@ public class App
 //        QueryParser qp = new QueryParser();
 //////        Create Query PARSER TEST
         QueryParser qp = new QueryParser();
-        String CREATE_QUERY = "CREATE TABLE ADITYA3 (COL1 char PK,COL3 int FK REFERENCES table col3);";
-        qp.parseQuery(db.currentDatabase, CREATE_QUERY);
+//        String CREATE_QUERY = "CREATE TABLE ADITYA3 (COL1 char PK,COL3 int FK REFERENCES table col3);";
+//        qp.parseQuery(db.currentDatabase, CREATE_QUERY);
 
 //        //Update Query Parser Test
 //        QueryParser queryParser=new QueryParser();
@@ -63,5 +63,10 @@ public class App
       //  ArrayList<String> columns = new ArrayList<>();
 //        columns.add("*");
 //        System.out.println( tb.select("ADITYA2","DUMMY","Test",columns,"COL3","=","val4"));
+
+        String SELECT_QUERY = "SELECT * FROM ADITYA2;";
+//        qp.parseQuery(db.currentDatabase,SELECT_QUERY);
+        SELECT_QUERY = "SELECT COL1 FROM ADITYA2 WHERE COL1=COL1;";
+        qp.parseQuery(db.currentDatabase,SELECT_QUERY);
     }
 }
