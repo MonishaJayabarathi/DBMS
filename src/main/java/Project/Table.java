@@ -288,7 +288,7 @@ public class Table {
     BufferedReader reader = new BufferedReader(new FileReader(tableFile));
     String st;
     HashMap<String, ArrayList<String>> records = new HashMap<>();
-    ArrayList<String> temp=null;
+    ArrayList<String> temp = null;
     while ((st = reader.readLine()) != null) {
       if (st.length() > 0) {
         String[] rec = st.split(" ");
@@ -301,24 +301,67 @@ public class Table {
         records.put(rec[0], temp);
       }
     }
-    int valueSize=temp.size();
-    FileWriter writer =new FileWriter(tableFile,false);
-    for (Map.Entry<String, ArrayList<String>> ee : records.entrySet()) {
-      temp=ee.getValue();
-      temp.removeAll(temp);
-      ee.setValue(temp);
+    FileWriter writer = new FileWriter(tableFile, false);
+    System.out.printf("Table Truncated successfully");
+    return true;
+  }
+  /**
+   * This Method will delete the table file and records of data in data
+   * dictionary file
+   *
+   * @param tableName
+   * @param userName
+   * @param databaseName
+   * @return
+   * @throws IOException
+   */
+  public boolean dropTable(String tableName, String userName,
+                           String databaseName) throws IOException {
+    File tableFile = new File(LOCAL_PATH + "/" + databaseName + "/" + tableName + ".txt");
+    if (!tableFile.exists()) {
+      System.out.println("Table Doesn't exist");
+      return false;
+    }else{
+      tableFile.delete();
     }
 
-    for (int i = 0; i < valueSize; i++) {
-      for (Map.Entry<String, ArrayList<String>> ee : records.entrySet()) {
-        String record=ee.getKey()+"\n";
+    File dataDictionaryFile =
+        new File(LOCAL_PATH + "/" + databaseName + "/"+ "testDataDictionary" +
+            ".txt");
+    BufferedReader reader = new BufferedReader(new FileReader(dataDictionaryFile));
+    String st,tableKey = null;
+    HashMap<String, ArrayList<String>> records = new HashMap<>();
+    ArrayList<String> temp=null;
+    while ((st = reader.readLine()) != null) {
+      if (st.length() > 0) {
+        String [] array = st.trim().split(" ");
+        if (array.length==1) {
+          tableKey = st;
+        }
+        if (records.containsKey(tableKey)) {
+          temp = new ArrayList<>(records.get(tableKey));
+        } else {
+          temp = new ArrayList<>();
+        }
+        temp.add(st);
+      }
+      records.put(tableKey, temp);
+    }
+    FileWriter writer =new FileWriter(dataDictionaryFile,false);
+    for (Map.Entry<String, ArrayList<String>> ee : records.entrySet()) {
+      String record="";
+      if (!ee.getKey().equals(tableName)) {
+        temp = ee.getValue();
+        for (int i = 0; i < temp.size(); i++) {
+          record += temp.get(i) + "\n";
+        }
         writer.write(record);
         writer.flush();
+        writer.write("\n");
+        writer.flush();
       }
-      writer.write("\n");
-      writer.flush();
     }
-    System.out.println("value truncated successfully");
+    System.out.println("table Dropped successfully");
     return true;
   }
 
