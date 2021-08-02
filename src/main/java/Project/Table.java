@@ -271,13 +271,11 @@ public class Table {
    * This method will truncate the table value
    *
    * @param tableName
-   * @param userName
    * @param databaseName
    * @return
    * @throws IOException
    */
-  public boolean truncate(String tableName, String userName,
-                          String databaseName) throws IOException {
+  public boolean truncate(String tableName,String databaseName) throws IOException {
     File tableFile = new File(LOCAL_PATH + "/" + databaseName + "/" + tableName + ".txt");
     if (!tableFile.exists()) {
       System.out.println("Table Doesn't exist");
@@ -301,7 +299,7 @@ public class Table {
       }
     }
     FileWriter writer = new FileWriter(tableFile, false);
-    System.out.printf("Table Truncated successfully");
+    System.out.println("Table Truncated successfully");
     return true;
   }
   /**
@@ -309,13 +307,11 @@ public class Table {
    * dictionary file
    *
    * @param tableName
-   * @param userName
    * @param databaseName
    * @return
    * @throws IOException
    */
-  public boolean dropTable(String tableName, String userName,
-                           String databaseName) throws IOException {
+  public boolean dropTable(String tableName,String databaseName) throws IOException {
     File tableFile = new File(LOCAL_PATH + "/" + databaseName + "/" + tableName + ".txt");
     if (!tableFile.exists()) {
       System.out.println("Table Doesn't exist");
