@@ -3,6 +3,7 @@ package Project;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -49,6 +50,16 @@ public class QueryParser {
   Table tb = new Table();
 
   public void parseQuery(String dbName, String query) throws IOException {
+
+    File el = new File(LOCAL_PATH+"event_logs.txt");
+    if (el.createNewFile()) {
+      System.out.println("Created new Event Log File");
+    }
+
+    FileWriter elWriter = new FileWriter(el, true);
+    elWriter.append(query).append(" WAS give by user at ").append( LocalDateTime.now().toString()).append("\n");
+    elWriter.close();
+
     Matcher createMatch = CREATE_QUERY_FINAL.matcher(query);
     Matcher insertMatch = INSERT_QUERY_FINAL.matcher(query);
     Matcher selectMatcher = SELECT_QUERY_FINAL.matcher(query);
