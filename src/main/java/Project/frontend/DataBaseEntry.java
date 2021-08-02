@@ -33,6 +33,7 @@ public class DataBaseEntry {
           if (loginUser.loginUser()) {
             System.out.printf("User Logged in\n");
             ShowUserQuery showUserQuery=new ShowUserQuery();
+
             showUserQuery.listQuery();
           } else {
             System.out.printf("User credential is not valid");

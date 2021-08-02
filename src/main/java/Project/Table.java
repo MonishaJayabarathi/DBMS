@@ -151,47 +151,38 @@ public class Table {
    * @param userName
    * @param databaseName
    * @param columns
-   * @param values
    * @return
    * @throws IOException
    */
   public boolean select(String tableName, String userName, String databaseName, ArrayList<String> columns,
-                        ArrayList<String> values,String Key,String condition, String value) throws IOException {
+                        String key, String condition, String value) throws IOException {
     File tableFile = new File(LOCAL_PATH + "/" + databaseName + "/" + tableName + ".txt");
     if (!tableFile.exists()) {
       System.out.println("Table Doesn't exist");
       return false;
     }
-
-    String q = "SELECT C1,C2 FROM Test1;";
-    String s = q.substring(q.indexOf("\s") + 1, q.indexOf("\sFROM"));
-
     BufferedReader br = new BufferedReader(new FileReader(tableFile));
-    String st;
-    String con1 = "C2";
-    String con2 = "2";
-
     HashMap<String, ArrayList<String>> records = getRecords(br);
     ArrayList<String> temp;
     ArrayList<Integer> presentIn = new ArrayList<>();
-    if (con1 != "") {
-      ArrayList<String> col = records.get(con1);
+    if (key != null) {
+      ArrayList<String> col = records.get(key);
       for (int i = 0; i < col.size(); i++) {
-        if (col.get(i).equals(con2)) {
+        if (col.get(i).equals(value)) {
           presentIn.add(i);
         }
       }
-//      System.out.println(presentIn.toString());
+      System.out.println(presentIn.toString());
     }
     for (Map.Entry<String, ArrayList<String>> ee : records.entrySet()) {
-      String key = ee.getKey();
-      if (s.indexOf(key) >= 0 || s.indexOf("*") >= 0) {
-        System.out.print(key + "\t");
+      String columnName = ee.getKey();
+      if (columns.contains(columnName) || columns.contains("*")) {
+        System.out.print(columnName + "\t");
         temp = ee.getValue();
         for (int i = 0; i < temp.size(); i++) {
-          if (con1 != "" && presentIn.contains(i))
+          if (key != null && presentIn.contains(i))
             System.out.print(temp.get(i) + "\t\t");
-          else if (con1 == "") System.out.print(temp.get(i) + "\t\t");
+          else if (key == null) System.out.print(temp.get(i) + "\t\t");
         }
         System.out.println("\n");
       }
@@ -219,11 +210,11 @@ public class Table {
 
     String conditionColumn=condition;
     String conditionValue=value;
-      File fileToBeModified = new File(LOCAL_PATH + databaseName + "/" + tableName + ".txt");
-      if (!fileToBeModified.exists()) {
-        System.out.println("Table Doesn't exist");
-        return false;
-      }
+    File fileToBeModified = new File(LOCAL_PATH + databaseName + "/" + tableName + ".txt");
+    if (!fileToBeModified.exists()) {
+      System.out.println("Table Doesn't exist");
+      return false;
+    }
 
     BufferedReader reader = new BufferedReader(new FileReader(fileToBeModified));
     String st;
@@ -245,10 +236,10 @@ public class Table {
 
     ArrayList<Integer> presentIn = new ArrayList<>();
     ArrayList<String> col = records.get(conditionColumn);
-      for (int i = 0; i < col.size(); i++) {
-        if (col.get(i).equals(conditionValue)) {
-          presentIn.add(i);
-        }
+    for (int i = 0; i < col.size(); i++) {
+      if (col.get(i).equals(conditionValue)) {
+        presentIn.add(i);
+      }
     }
 
     for (Map.Entry<String, ArrayList<String>> ee : records.entrySet()) {
@@ -274,6 +265,7 @@ public class Table {
     System.out.printf("value Updated successfully");
     return true;
   }
+
 
   /**
    * This method will truncate the table value
@@ -399,7 +391,7 @@ public class Table {
         } else {
           String[] details = st.split("\s");
           boolean isPrimary = details.length == 3;
-          boolean isForeign = details.length == 5;
+          boolean isForeign = details.length == 6;
           if (isPrimary) {
             data.add("\033[4m" + details[0] +
                 "\033[0m" + " " + details[1]);

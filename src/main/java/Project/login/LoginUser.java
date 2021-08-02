@@ -3,6 +3,7 @@ package Project.login;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import static Project.Constants.LOGIN_CREDENTIALS_FILE;
 
 public class LoginUser extends User {
 
@@ -16,7 +17,7 @@ public class LoginUser extends User {
         final String passwordSha256Hash = HashAlgorithmUtil.getSHA256Hash(password);
         password = passwordSha256Hash;
 
-        FileReader fr = new FileReader("src/main/java/Project/login/User_Credential");
+        FileReader fr = new FileReader(LOGIN_CREDENTIALS_FILE);
         BufferedReader br = new BufferedReader(fr); //Creation of BufferedReader object
         String s;
         String[] words = null;

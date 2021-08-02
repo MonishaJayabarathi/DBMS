@@ -29,9 +29,8 @@ public class QueryParser {
   public String INSERT_VALUES_QUERY = "\\sVALUES\\s\\(([\\s\\S]+)\\);";
   public Pattern INSERT_QUERY_FINAL = Pattern.compile(INSERT_QUERY_OUTER+INSERT_VALUES_QUERY);
 
-
-  public String UPDATE_QUERY_OUTER = "UPDATE\\s(\\w+)\\sSET\\s(\\w+)=(\\w+)?(,\\s(\\w+)=(\\w+))*";
-  public String UPDATE_QUERY_CONDITION = "(\\sWHERE\\s(\\w+)=(\\w+))?;";
+  public String UPDATE_QUERY_OUTER = "UPDATE\\s(\\w+)\\sSET\\s(((\\w+)=(\\w+))(,\\s((\\w+)=(\\w+)))*)";
+  public String UPDATE_QUERY_CONDITION = "\\sWHERE\\s((\\w+)=(\\w+));";
   public Pattern UPDATE_QUERY_FINAL = Pattern.compile(UPDATE_QUERY_OUTER+UPDATE_QUERY_CONDITION);
 
   public String TRUNCATE_QUERY_OUTER = "TRUNCATE TABLE\\s(\\w+);";
@@ -129,19 +128,31 @@ public class QueryParser {
   public void selectWrapper(String dbName, Matcher queryMatcher){
 
   }
-  public void updateWrapper(String dbName, Matcher updateQueryMatcher) {
-    System.out.printf("Update QUERY Parser");
+  public void updateWrapper(String dbName,
+                            Matcher updateQueryMatcher) throws IOException {
+    System.out.println("Update QUERY format passed");
+    Table table=new Table();
 
     String tableName = updateQueryMatcher.group(1);
     String tableSet = updateQueryMatcher.group(2);
+    String conditionSet=updateQueryMatcher.group(10);
     ArrayList<String> columns = new ArrayList<>();
     ArrayList<String> values = new ArrayList<>();
-    String[] colValSet = tableSet.split(",");
-    for (String colVal : colValSet) {
-      columns.add(colVal.split(" ")[0].strip());
-      values.add((colVal.split(" ")[1]).strip());
+    if(tableSet.split(", ").length==1){
+      columns.add(tableSet.split("=")[0]);
+      values.add(tableSet.split("=")[1]);
     }
+    String[] colValSet = tableSet.split(", ");
+    for (String colVal : colValSet) {
+      columns.add(colVal.split("=")[0].strip());
+      values.add((colVal.split("=")[1]).strip());
+    }
+    String conditionColumns=conditionSet.split("=")[0].strip();
+    String conditionValues=conditionSet.split("=")[1].strip();
+
+    table.update(tableName,dbName,columns,values,conditionColumns,conditionValues);
   }
+
 
   public void truncateWrapper(String dbName, Matcher truncateMatch){
     System.out.printf("Truncate QUERY Parser");
