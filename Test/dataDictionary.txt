@@ -1,12 +1,4 @@
-Test1
-C1 int
-C2 char
-
-Test2
-C1 int
-C2 char
-
-ADITYA
-COL1 char
-COL3 int
+ADITYA2
+COL1 char PK
+COL3 int FK REFERENCES table col3
 

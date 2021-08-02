@@ -2,11 +2,12 @@ package Project.frontend;
 
 import Project.QueryParser;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class ShowUserQuery {
 
-  public void listQuery(){
+  public void listQuery() throws IOException {
     System.out.println("\nPlease select query number That you want to perform");
     Scanner sc=new Scanner(System.in);
     while (true) {

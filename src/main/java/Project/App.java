@@ -19,15 +19,15 @@ public class App
         db.use("Test");
 
         // Test Create table
-
-        ArrayList<String> columns = new ArrayList<>();
-        columns.add("C1");
-        columns.add("C2");
-        ArrayList<String> valuesTypes = new ArrayList<>();
-        valuesTypes.add("int");
-        valuesTypes.add("char");
-        tb.create("Test1","aditya","Test",columns,valuesTypes);
-        tb.create("Test2","aditya","Test",columns,valuesTypes);
+//
+//        ArrayList<String> columns = new ArrayList<>();
+//        columns.add("C1");
+//        columns.add("C2");
+//        ArrayList<String> valuesTypes = new ArrayList<>();
+//        valuesTypes.add("int");
+//        valuesTypes.add("char");
+//        tb.create("Test1","aditya","Test",columns,valuesTypes);
+//        tb.create("Test2","aditya","Test",columns,valuesTypes);
 
 ////        Test Insert into Database
 //        ArrayList<String> columns = new ArrayList<>();
@@ -39,15 +39,20 @@ public class App
 //        tb.insert("Test1","aditya","Test",columns,values);
 ////        tb.insert("Test2","aditya","Test",columns,values);
 
-
-//        Create Query PARSER TEST
         QueryParser qp = new QueryParser();
-        String CREATE_QUERY = "CREATE TABLE ADITYA (COL1 char,COL3 int);";
+////        Create Query PARSER TEST
+//        QueryParser qp = new QueryParser();
+        String CREATE_QUERY = "CREATE TABLE ADITYA2 (COL1 char PK,COL3 int FK REFERENCES table col3);";
         qp.parseQuery(db.currentDatabase, CREATE_QUERY);
 
-        //Update Query Parser Test
-        QueryParser queryParser=new QueryParser();
-        String UPDATE_QUERY="UPDATE Test1 SET C1=V1, C2=V3 WHERE C2=V2;";
-        queryParser.parseQuery(db.currentDatabase, UPDATE_QUERY);
+//        //Update Query Parser Test
+//        QueryParser queryParser=new QueryParser();
+//        String UPDATE_QUERY="UPDATE Test1 SET C1=V1, C2=V3 WHERE C2=V2;";
+//        queryParser.parseQuery(db.currentDatabase, UPDATE_QUERY);
+
+//        INSERT QUERY TESTER
+//        String INSERT_QUERY = "INSERT INTO ADITYA2 (COL1,COL3) VALUES (val1,val2);";
+//        qp.parseQuery(db.currentDatabase,INSERT_QUERY);
+
     }
 }
