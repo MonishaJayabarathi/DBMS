@@ -33,8 +33,8 @@ public class QueryParser {
   public String UPDATE_QUERY_CONDITION = "\\sWHERE\\s((\\w+)=(\\w+));";
   public Pattern UPDATE_QUERY_FINAL = Pattern.compile(UPDATE_QUERY_OUTER+UPDATE_QUERY_CONDITION);
 
-  public String TRUNCATE_QUERY_OUTER = "TRUNCATE TABLE\\s(\\w+);";
-  public Pattern TRUNCATE_QUERY_FINAL = Pattern.compile(TRUNCATE_QUERY_OUTER);
+  public String TRUNCATE_QUERY = "TRUNCATE TABLE\\s(\\w+);";
+  public Pattern TRUNCATE_QUERY_FINAL = Pattern.compile(TRUNCATE_QUERY);
 
   public String DROP_QUERY_OUTER = "DROP TABLE\\s(\\w+);";
   public Pattern DROP_QUERY_FINAL = Pattern.compile(DROP_QUERY_OUTER);
@@ -131,7 +131,7 @@ public class QueryParser {
   public void updateWrapper(String dbName,
                             Matcher updateQueryMatcher) throws IOException {
     System.out.println("Update QUERY format passed");
-    Table table=new Table();
+
 
     String tableName = updateQueryMatcher.group(1);
     String tableSet = updateQueryMatcher.group(2);
@@ -150,14 +150,18 @@ public class QueryParser {
     String conditionColumns=conditionSet.split("=")[0].strip();
     String conditionValues=conditionSet.split("=")[1].strip();
 
-    table.update(tableName,dbName,columns,values,conditionColumns,conditionValues);
+    tb.update(tableName,dbName,columns,values,conditionColumns,conditionValues);
   }
 
 
-  public void truncateWrapper(String dbName, Matcher truncateMatch){
-    System.out.printf("Truncate QUERY Parser");
+  public void truncateWrapper(String dbName, Matcher truncateMatch) throws IOException {
+    System.out.println("Truncate QUERY Parser");
+    String tableName = truncateMatch.group(1);
+    tb.truncate(tableName,dbName);
   }
-  public void dropTableWrapper(String dbName, Matcher dropTableMatch){
-    System.out.printf("Truncate QUERY Parser");
+  public void dropTableWrapper(String dbName, Matcher dropTableMatch) throws IOException {
+    System.out.println("drop QUERY Parser");
+    String tableName = dropTableMatch.group(1);
+    tb.dropTable(tableName,dbName);
   }
 }

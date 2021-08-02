@@ -20,14 +20,14 @@ public class App
 
         // Test Create table
 //
-//        ArrayList<String> columns = new ArrayList<>();
-//        columns.add("C1");
-//        columns.add("C2");
-//        ArrayList<String> valuesTypes = new ArrayList<>();
-//        valuesTypes.add("int");
-//        valuesTypes.add("char");
-//        tb.create("Test1","aditya","Test",columns,valuesTypes);
-//        tb.create("Test2","aditya","Test",columns,valuesTypes);
+    ArrayList<String> columns = new ArrayList<>();
+    columns.add("C1");
+    columns.add("C2");
+    ArrayList<String> valuesTypes = new ArrayList<>();
+    valuesTypes.add("int");
+    valuesTypes.add("char");
+ //   tb.create("Test1","aditya","Test",columns,valuesTypes);
+ //   tb.create("Test2","aditya","Test",columns,valuesTypes);
 
 ////        Test Insert into Database
 //        ArrayList<String> columns = new ArrayList<>();
@@ -59,7 +59,7 @@ public class App
 //        String UPDATE_QUERY = "UPDATE ADITYA2 SET COL1=v10 WHERE COL3=val4;";
 
         // SELECT QUERY TESTER
-        ArrayList<String> columns = new ArrayList<>();
+      //  ArrayList<String> columns = new ArrayList<>();
         columns.add("*");
         System.out.println( tb.select("ADITYA2","DUMMY","Test",columns,"COL3","=","val4"));
     }
