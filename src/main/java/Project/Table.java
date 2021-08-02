@@ -56,15 +56,24 @@ public class Table {
   }
 
   public String getPrimaryKeyColumn(String dbName, String tableName) throws IOException {
-    String finalCol = "test";
     File dataDict = new File(LOCAL_PATH + dbName + "/dataDictionary.txt");
     BufferedReader dataDictReader = new BufferedReader(new FileReader(dataDict));
     String st;
+    String nl;
     while ((st = dataDictReader.readLine()) != null){
-
+      if(st.length() > 0){
+        if(st.equals(tableName)){
+          while ((nl = dataDictReader.readLine()) != null){
+            String[] tmp = nl.split(" ");
+            if (tmp.length == 3){
+              return tmp[0];
+            }
+          }
+        }
+      }
     }
 
-    return finalCol;
+    return null;
   }
 
   public boolean create(String tableName, String userName, String databaseName, ArrayList<String> columns, ArrayList<String> valuesTypes,HashMap<String,String> keySet) {
@@ -121,14 +130,31 @@ public class Table {
 
     //TODO: Check for primary key
 
+    String pk = getPrimaryKeyColumn(databaseName,tableName);
+
+
+
     if (columns != null) {
+      ArrayList<String> colValues = new ArrayList<>();
       File tableFile = new File(LOCAL_PATH + databaseName + "/" + tableName + ".txt");
+      if(pk == null){
+        System.out.println("No Primary key in database");
+      } else{
+        BufferedReader bf = new BufferedReader(new FileReader(tableFile));
+        colValues = getColumn(pk,getRecords(bf));
+      }
       FileWriter tableFileWriter = new FileWriter(tableFile, true);
       if (!tableFile.exists()) {
         System.out.println("Table Doesn't exist");
         return false;
       }
       for (int i = 0; i < columns.size(); i++) {
+        if(columns.get(i).equals(pk)){
+          if (colValues.contains(values.get(i))){
+            System.out.println("Same value present in primary key! Sorry.");
+            return false;
+          }
+        }
         tableFileWriter.append(columns.get(i));
         tableFileWriter.append(" ");
         tableFileWriter.append(values.get(i));

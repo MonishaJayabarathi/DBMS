@@ -26,6 +26,7 @@ public class App
     ArrayList<String> valuesTypes = new ArrayList<>();
     valuesTypes.add("int");
     valuesTypes.add("char");
+//    System.out.println(tb.getPrimaryKeyColumn("Test","ADITYA2"));
  //   tb.create("Test1","aditya","Test",columns,valuesTypes);
  //   tb.create("Test2","aditya","Test",columns,valuesTypes);
 
@@ -41,7 +42,7 @@ public class App
 //
 //        QueryParser qp = new QueryParser();
 //////        Create Query PARSER TEST
-////        QueryParser qp = new QueryParser();
+        QueryParser qp = new QueryParser();
 //        String CREATE_QUERY = "CREATE TABLE ADITYA2 (COL1 char PK,COL3 int FK REFERENCES table col3);";
 //        qp.parseQuery(db.currentDatabase, CREATE_QUERY);
 
@@ -52,15 +53,15 @@ public class App
 
 //        INSERT QUERY TESTER
 //        String INSERT_QUERY = "INSERT INTO ADITYA2 (COL1,COL3) VALUES (val1,val2);";
-//        String INSERT_QUERY = "INSERT INTO ADITYA2 (COL1,COL3) VALUES (val3,val4);";
-//        qp.parseQuery(db.currentDatabase,INSERT_QUERY);
+        String INSERT_QUERY = "INSERT INTO ADITYA2 (COL1,COL3) VALUES (val3,val4);";
+        qp.parseQuery(db.currentDatabase,INSERT_QUERY);
 
         //UPDATE QUERY TESTER
 //        String UPDATE_QUERY = "UPDATE ADITYA2 SET COL1=v10 WHERE COL3=val4;";
 
         // SELECT QUERY TESTER
       //  ArrayList<String> columns = new ArrayList<>();
-        columns.add("*");
-        System.out.println( tb.select("ADITYA2","DUMMY","Test",columns,"COL3","=","val4"));
+//        columns.add("*");
+//        System.out.println( tb.select("ADITYA2","DUMMY","Test",columns,"COL3","=","val4"));
     }
 }

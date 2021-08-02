@@ -121,7 +121,7 @@ public class QueryParser {
 
   }
 
-  //TODO: Complete All parsers(Create(with PK and FK), UPDATE, SELECT, INSERT, DROP, TRUNCATE, Database (Create, Drop, use)
+  //TODO: Complete All parsers(Database (Create, Drop, use)
   //TODO: Generate Logs(all 3 types of logs)
 
   //TODO: DUMPS and take back DUMPS and transaction
