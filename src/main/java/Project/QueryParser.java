@@ -33,7 +33,7 @@ public class QueryParser {
   public Pattern TRUNCATE_QUERY_FINAL = Pattern.compile(TRUNCATE_QUERY_OUTER);
 
   public String DROP_QUERY_OUTER = "TRUNCATE TABLE\\s(\\w+);";
-  public Pattern DROP_QUERY_FINAL = Pattern.compile(TRUNCATE_QUERY_OUTER);
+  public Pattern DROP_QUERY_FINAL = Pattern.compile(DROP_QUERY_OUTER);
 
 
   HashMap<String, ArrayList<String>> queryTracker = new HashMap<>();
@@ -84,8 +84,18 @@ public class QueryParser {
   public void selectWrapper(String dbName, Matcher queryMatcher){
 
   }
-  public void updateWrapper(String dbName, Matcher updateQueryMatcher){
+  public void updateWrapper(String dbName, Matcher updateQueryMatcher) {
     System.out.printf("Update QUERY Parser");
+
+    String tableName = updateQueryMatcher.group(1);
+    String tableSet = updateQueryMatcher.group(2);
+    ArrayList<String> columns = new ArrayList<>();
+    ArrayList<String> values = new ArrayList<>();
+    String[] colValSet = tableSet.split(",");
+    for (String colVal : colValSet) {
+      columns.add(colVal.split(" ")[0].strip());
+      values.add((colVal.split(" ")[1]).strip());
+    }
   }
 
   public void truncateWrapper(String dbName, Matcher truncateMatch){

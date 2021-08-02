@@ -11,10 +11,11 @@ public class App {
     }
     LoginUser loginUser=new LoginUser();
     if(loginUser.loginUser()){
-      System.out.printf("User Logged in");
+      System.out.println("User Logged in");
+
     }
     else{
-      System.out.printf("User credential is not valid");
+      System.out.println("User credential is not valid");
     }
   }
 }
