@@ -60,7 +60,7 @@ public class App
 
         // SELECT QUERY TESTER
         ArrayList<String> columns = new ArrayList<>();
-        columns.add("COL1");
+        columns.add("*");
         System.out.println( tb.select("ADITYA2","DUMMY","Test",columns,"COL3","=","val4"));
     }
 }
