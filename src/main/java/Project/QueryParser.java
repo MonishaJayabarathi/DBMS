@@ -1,5 +1,6 @@
 package Project;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -25,8 +26,8 @@ public class QueryParser {
   public Pattern SELECT_QUERY_FINAL = Pattern.compile(SELECT_QUERY_OUTER+SELECT_QUERY_CONDITION);
 
 
-  public String UPDATE_QUERY_OUTER = "UPDATE\\s(\\w+)\\sSET\\s(\\w+)=(\\w+)?(,\\s(\\w+)=(\\w+))*";
-  public String UPDATE_QUERY_CONDITION = "(\\sWHERE\\s(\\w+)=(\\w+))?;";
+  public String UPDATE_QUERY_OUTER = "UPDATE\\s(\\w+)\\sSET\\s(((\\w+)=(\\w+))(,\\s((\\w+)=(\\w+)))*)";
+  public String UPDATE_QUERY_CONDITION = "\\sWHERE\\s((\\w+)=(\\w+));";
   public Pattern UPDATE_QUERY_FINAL = Pattern.compile(UPDATE_QUERY_OUTER+UPDATE_QUERY_CONDITION);
 
   public String TRUNCATE_QUERY_OUTER = "TRUNCATE TABLE\\s(\\w+);";
@@ -40,7 +41,7 @@ public class QueryParser {
 
   Table tb = new Table();
 
-  public void parseQuery(String dbName, String query) {
+  public ArrayList<String> parseQuery(String dbName, String query) throws IOException {
     Matcher createMatch = CREATE_QUERY_FINAL.matcher(query);
     Matcher selectMatcher = SELECT_QUERY_FINAL.matcher(query);
     Matcher updateMatcher = UPDATE_QUERY_FINAL.matcher(query);
@@ -52,12 +53,13 @@ public class QueryParser {
     } else if (selectMatcher.find()) {
       selectWrapper(dbName, selectMatcher);
     } else if (updateMatcher.find()) {
-      updateWrapper(dbName, updateMatcher);
+     updateWrapper(dbName, updateMatcher);
     } else if (truncateMatch.find()) {
       truncateWrapper(dbName, truncateMatch);
     } else if (dropTableMatch.find()) {
       dropTableWrapper(dbName, truncateMatch);
     }
+    return null;
   }
 
   public void createWrapper(String dbName,Matcher queryMatcher){
@@ -84,18 +86,29 @@ public class QueryParser {
   public void selectWrapper(String dbName, Matcher queryMatcher){
 
   }
-  public void updateWrapper(String dbName, Matcher updateQueryMatcher) {
-    System.out.printf("Update QUERY Parser");
+  public void updateWrapper(String dbName,
+                                     Matcher updateQueryMatcher) throws IOException {
+    System.out.println("Update QUERY format passed");
+    Table table=new Table();
 
     String tableName = updateQueryMatcher.group(1);
     String tableSet = updateQueryMatcher.group(2);
+    String conditionSet=updateQueryMatcher.group(10);
     ArrayList<String> columns = new ArrayList<>();
     ArrayList<String> values = new ArrayList<>();
-    String[] colValSet = tableSet.split(",");
-    for (String colVal : colValSet) {
-      columns.add(colVal.split(" ")[0].strip());
-      values.add((colVal.split(" ")[1]).strip());
+    if(tableSet.split(", ").length==1){
+      columns.add(tableSet.split("=")[0]);
+      values.add(tableSet.split("=")[1]);
     }
+    String[] colValSet = tableSet.split(", ");
+    for (String colVal : colValSet) {
+      columns.add(colVal.split("=")[0].strip());
+      values.add((colVal.split("=")[1]).strip());
+    }
+      String conditionColumns=conditionSet.split("=")[0].strip();
+      String conditionValues=conditionSet.split("=")[1].strip();
+
+    table.update(tableName,dbName,columns,values,conditionColumns,conditionValues);
   }
 
   public void truncateWrapper(String dbName, Matcher truncateMatch){

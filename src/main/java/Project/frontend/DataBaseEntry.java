@@ -8,8 +8,8 @@ import java.util.Scanner;
 
 public class DataBaseEntry {
   public static void main(String[] args) throws IOException {
+    System.out.println("Welcome");
     while (true) {
-      System.out.println("Welcome");
       System.out.println("1. Register user");
       System.out.println("2. User Log in");
       System.out.println("3. Exit");
