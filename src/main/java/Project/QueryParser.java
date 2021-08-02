@@ -1,10 +1,14 @@
 package Project;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static Project.Constants.LOCAL_PATH;
 
 public class QueryParser {
   /**
@@ -67,7 +71,16 @@ public class QueryParser {
     }
   }
 
-  public void createWrapper(String dbName,Matcher queryMatcher){
+  public void generalLogWriter(String queryType, boolean status, long time) throws IOException {
+    File gl = new File(LOCAL_PATH+"general_logs.txt");
+    if (gl.createNewFile()) {
+      System.out.println("Created new General Log File");
+    }
+    FileWriter glWriter = new FileWriter(gl, true);
+    glWriter.append(queryType).append(" QUERY with Status of ").append(String.valueOf(status)).append(" was executed in ").append(String.valueOf(time)).append(" nano seconds").append("\n");
+    glWriter.close();
+  }
+  public void createWrapper(String dbName,Matcher queryMatcher) throws IOException {
     // 0 index will have pk and 1 will have FK
     HashMap<String, String> keySet = new HashMap<>();
 
@@ -94,8 +107,12 @@ public class QueryParser {
 
     System.out.println(keySet);
     //TODO: Add logs here only
+    long startTime = System.nanoTime();
     boolean status = tb.create(tableName,"DUMMY",dbName,columns,values,keySet);
+    long endTime = System.nanoTime();
+    long executionTime = endTime - startTime;
 
+    generalLogWriter("CREATE",status,executionTime);
     System.out.println(status);
   }
 
@@ -115,8 +132,12 @@ public class QueryParser {
     for(String val:vals){
       values.add(val.strip());
     }
-
+    long startTime = System.nanoTime();
     boolean status = tb.insert(tableName,"DUMMY",dbName,columns,values);
+    long endTime = System.nanoTime();
+    long executionTime = endTime - startTime;
+
+    generalLogWriter("INSERT",status,executionTime);
     System.out.println(status);
 
   }
@@ -150,18 +171,33 @@ public class QueryParser {
     String conditionColumns=conditionSet.split("=")[0].strip();
     String conditionValues=conditionSet.split("=")[1].strip();
 
-    tb.update(tableName,dbName,columns,values,conditionColumns,conditionValues);
+    long startTime = System.nanoTime();
+    boolean status = tb.update(tableName,dbName,columns,values,conditionColumns,conditionValues);
+    long endTime = System.nanoTime();
+    long executionTime = endTime - startTime;
+
+    generalLogWriter("UPDATE",status,executionTime);
   }
 
 
   public void truncateWrapper(String dbName, Matcher truncateMatch) throws IOException {
     System.out.println("Truncate QUERY Parser");
     String tableName = truncateMatch.group(1);
-    tb.truncate(tableName,dbName);
+    long startTime = System.nanoTime();
+    boolean status = tb.truncate(tableName,dbName);
+    long endTime = System.nanoTime();
+    long executionTime = endTime - startTime;
+
+    generalLogWriter("TRUNCATE TABLE",status,executionTime);
   }
   public void dropTableWrapper(String dbName, Matcher dropTableMatch) throws IOException {
     System.out.println("drop QUERY Parser");
     String tableName = dropTableMatch.group(1);
-    tb.dropTable(tableName,dbName);
+    long startTime = System.nanoTime();
+    boolean status = tb.dropTable(tableName,dbName);
+    long endTime = System.nanoTime();
+    long executionTime = endTime - startTime;
+
+    generalLogWriter("DROP TABLE",status,executionTime);
   }
 }

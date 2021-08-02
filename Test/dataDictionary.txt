@@ -2,3 +2,23 @@ ADITYA2
 COL1 char PK
 COL3 int FK REFERENCES table col3
 
+ADITYA3
+COL1 char PK
+COL3 int FK REFERENCES table col3
+
+ADITYA3
+COL1 char PK
+COL3 int FK REFERENCES table col3
+
+ADITYA3
+COL1 char PK
+COL3 int FK REFERENCES table col3
+
+ADITYA3
+COL1 char PK
+COL3 int FK REFERENCES table col3
+
+ADITYA3
+COL1 char PK
+COL3 int FK REFERENCES table col3
+

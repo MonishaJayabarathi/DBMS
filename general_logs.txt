@@ -1,0 +1,2 @@
+CREATE QUERY with Status of true was executed in 6000638 nano seconds
+CREATE QUERY with Status of true was executed in 5227290 nano seconds
