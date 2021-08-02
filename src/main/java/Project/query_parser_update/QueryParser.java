@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class QueryParser {
-  String updateRegex = "UPDATE\\s+(\\S+)\\s*SET\\s+(.*?)\\s*(WHERE\\s+(.*?))?;";
+  String updateRegex = "UPDATE\\s+(\\w+)\\s*SET\\s+(.*?)\\s*(WHERE\\s+(.*?))?;";
   public Pattern UPDATE_QUERY_FINAL = Pattern.compile(updateRegex);
 
   String table_name, value, condition = "";

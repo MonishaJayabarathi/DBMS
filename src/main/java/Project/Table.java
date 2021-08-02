@@ -137,7 +137,7 @@ public class Table {
    * @throws IOException
    */
   public boolean select(String tableName, String userName, String databaseName, ArrayList<String> columns,
-                        ArrayList<String> values) throws IOException {
+                        ArrayList<String> values,String Key,String condition, String value) throws IOException {
     File tableFile = new File(LOCAL_PATH + "/" + databaseName + "/" + tableName + ".txt");
     if (!tableFile.exists()) {
       System.out.println("Table Doesn't exist");
@@ -184,15 +184,11 @@ public class Table {
    * This method displays ER Diagram.
    * The underlined column is the Primary Key. The Bolded column is the Foreign Key.
    *
-   * @param tableName
-   * @param userName
+
    * @param databaseName
-   * @param columns
-   * @param values
    * @throws IOException
    */
-  public void erd(String tableName, String userName, String databaseName, ArrayList<String> columns,
-                  ArrayList<String> values) throws IOException {
+  public void erd(String databaseName) throws IOException {
     HashMap<String, ArrayList<String>> list = new HashMap<String, ArrayList<String>>();
 
     File dataDict = new File(LOCAL_PATH + databaseName + "/dataDictionary.txt");

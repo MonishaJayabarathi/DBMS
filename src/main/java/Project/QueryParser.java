@@ -20,6 +20,10 @@ public class QueryParser {
   public String CREATE_QUERY_INNER = "\\(((?:\\w+\\s\\w+\\(?[0-9]*\\)?,?)+)\\);";
   public Pattern CREATE_QUERY_FINAL = Pattern.compile(CREATE_QUERY_OUTER+CREATE_QUERY_INNER);
 
+  public String SELECT_QUERY_OUTER = "SELECT\\s(\\*)?(\\w+)?\\sFROM\\s(\\w+)";
+  public String SELECT_QUERY_CONDITION = "(\\sWHERE\\s(\\w+)=(\\w+))?;";
+  public Pattern SELECT_QUERY_FINAL = Pattern.compile(SELECT_QUERY_OUTER+SELECT_QUERY_CONDITION);
+
   HashMap<String, ArrayList<String>> queryTracker = new HashMap<>();
 
   Table tb = new Table();
@@ -28,6 +32,11 @@ public class QueryParser {
     Matcher createMatch = CREATE_QUERY_FINAL.matcher(query);
     if(createMatch.find()){
       createWrapper(dbName,createMatch);
+    } else {
+      Matcher selectMatcher = SELECT_QUERY_FINAL.matcher(query);
+      if(selectMatcher.find()){
+        selectWrapper(dbName,selectMatcher);
+      }
     }
   }
 
@@ -46,5 +55,11 @@ public class QueryParser {
     boolean status = tb.create(tableName,"DUMMY",dbName,columns,values);
 
     System.out.println(status);
+  }
+
+  //TODO: Complete All parsers(Create(with PK and FK), UPDATE, SELECT, INSERT,DROP, TRUNCATE, Database (Create, Drop, use)
+  //TODO: Generate Logs(all 3 types of logs)
+  public void selectWrapper(String dbName, Matcher queryMatcher){
+
   }
 }
