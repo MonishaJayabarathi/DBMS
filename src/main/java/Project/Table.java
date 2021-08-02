@@ -181,6 +181,148 @@ public class Table {
   }
 
   /**
+   * This method updates column value where condition is matched in table.
+   * It can handle simple WHERE clause like WHERE col1=value
+   *
+   * @param tableName
+   * @param userName
+   * @param databaseName
+   * @param columns
+   * @param values
+   * @return
+   * @throws IOException
+   */
+  public boolean update(String tableName, String userName, String databaseName, ArrayList<String> columns,
+                        ArrayList<String> values,String Key,String condition, String value) throws IOException {
+    // Assuming user will send columnNames along with the query in correct order
+    // If column Names are not present send back the error
+    // Assuming that user will send all columns
+    // Assuming table exist
+
+    String q = "UPDATE Test1 SET C1=v2 WHERE C2=V2;";
+
+    String setColumn=value.split("=")[0];
+    String val=value.split("=")[1];
+
+    String conditionColumn=condition;
+    String conditionValue=value;
+
+    //TODO: Check for primary key
+    if (setColumn != null) {
+
+      File tableFile = new File(LOCAL_PATH + databaseName + "/" + tableName + ".txt");
+      if (!tableFile.exists()) {
+        System.out.println("Table Doesn't exist");
+        return false;
+      }
+    }
+
+    File fileToBeModified = new File(LOCAL_PATH + databaseName + "/" + tableName + ".txt");
+
+    BufferedReader reader = new BufferedReader(new FileReader(fileToBeModified));
+    String st;
+
+    HashMap<String, ArrayList<String>> records = new HashMap<>();
+    ArrayList<String> temp;
+    while ((st = reader.readLine()) != null) {
+      if (st.length() > 0) {
+        String[] rec = st.split(" ");
+        if (records.containsKey(rec[0])) {
+          temp = new ArrayList<>(records.get(rec[0]));
+        } else {
+          temp = new ArrayList<>();
+        }
+        temp.add(rec[1]);
+        records.put(rec[0], temp);
+      }
+    }
+    ArrayList<Integer> presentIn = new ArrayList<>();
+    if (conditionColumn != "") {
+      ArrayList<String> col = records.get(conditionColumn);
+      for (int i = 0; i < col.size(); i++) {
+        if (col.get(i).equals(conditionValue)) {
+          presentIn.add(i);
+        }
+      }
+    }
+    for (Map.Entry<String, ArrayList<String>> ee : records.entrySet()) {
+      temp = ee.getValue();
+      for (int i = 0; i < temp.size(); i++) {
+        if (ee.getKey().equals(setColumn) && presentIn.contains(i)) {
+          temp.set(i,val) ;
+          records.put(ee.getKey(),temp);
+        }
+      }
+    }
+    FileWriter writer =new FileWriter(fileToBeModified,false);
+    for (int i = 0; i <  records.get(conditionColumn).size(); i++) {
+      for (Map.Entry<String, ArrayList<String>> ee : records.entrySet()) {
+        String record=ee.getKey()+" "+ee.getValue().get(i)+"\n";
+        writer.write(record);
+        writer.flush();
+      }
+      writer.write("\n");
+      writer.flush();
+    }
+    System.out.printf("value Updated successfully");
+    return true;
+  }
+
+  /**
+   * This method will truncate the table value
+   *
+   * @param tableName
+   * @param userName
+   * @param databaseName
+   * @return
+   * @throws IOException
+   */
+  public boolean truncate(String tableName, String userName,
+                          String databaseName) throws IOException {
+    File tableFile = new File(LOCAL_PATH + "/" + databaseName + "/" + tableName + ".txt");
+    if (!tableFile.exists()) {
+      System.out.println("Table Doesn't exist");
+      return false;
+    }
+
+    BufferedReader reader = new BufferedReader(new FileReader(tableFile));
+    String st;
+    HashMap<String, ArrayList<String>> records = new HashMap<>();
+    ArrayList<String> temp=null;
+    while ((st = reader.readLine()) != null) {
+      if (st.length() > 0) {
+        String[] rec = st.split(" ");
+        if (records.containsKey(rec[0])) {
+          temp = new ArrayList<>(records.get(rec[0]));
+        } else {
+          temp = new ArrayList<>();
+        }
+        temp.add(rec[1]);
+        records.put(rec[0], temp);
+      }
+    }
+    int valueSize=temp.size();
+    FileWriter writer =new FileWriter(tableFile,false);
+    for (Map.Entry<String, ArrayList<String>> ee : records.entrySet()) {
+      temp=ee.getValue();
+      temp.removeAll(temp);
+      ee.setValue(temp);
+    }
+
+    for (int i = 0; i < valueSize; i++) {
+      for (Map.Entry<String, ArrayList<String>> ee : records.entrySet()) {
+        String record=ee.getKey()+"\n";
+        writer.write(record);
+        writer.flush();
+      }
+      writer.write("\n");
+      writer.flush();
+    }
+    System.out.println("value truncated successfully");
+    return true;
+  }
+
+  /**
    * This method displays ER Diagram.
    * The underlined column is the Primary Key. The Bolded column is the Foreign Key.
    *

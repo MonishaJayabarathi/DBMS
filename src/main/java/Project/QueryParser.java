@@ -24,6 +24,15 @@ public class QueryParser {
   public String SELECT_QUERY_CONDITION = "(\\sWHERE\\s(\\w+)=(\\w+))?;";
   public Pattern SELECT_QUERY_FINAL = Pattern.compile(SELECT_QUERY_OUTER+SELECT_QUERY_CONDITION);
 
+
+  public String UPDATE_QUERY_OUTER = "UPDATE\\s(\\w+)\\sSET\\s(\\w+)=(\\w+)?(,\\s(\\w+)=(\\w+))*";
+  public String UPDATE_QUERY_CONDITION = "(\\sWHERE\\s(\\w+)=(\\w+))?;";
+  public Pattern UPDATE_QUERY_FINAL = Pattern.compile(UPDATE_QUERY_OUTER+UPDATE_QUERY_CONDITION);
+
+  public String TRUNCATE_QUERY_OUTER = "TRUNCATE TABLE\\s(\\w+);";
+  public Pattern TRUNCATE_QUERY_FINAL = Pattern.compile(TRUNCATE_QUERY_OUTER);
+
+
   HashMap<String, ArrayList<String>> queryTracker = new HashMap<>();
 
   Table tb = new Table();
@@ -32,10 +41,21 @@ public class QueryParser {
     Matcher createMatch = CREATE_QUERY_FINAL.matcher(query);
     if(createMatch.find()){
       createWrapper(dbName,createMatch);
-    } else {
+    } else{
       Matcher selectMatcher = SELECT_QUERY_FINAL.matcher(query);
       if(selectMatcher.find()){
         selectWrapper(dbName,selectMatcher);
+      }else{
+        Matcher updateMatcher = UPDATE_QUERY_FINAL.matcher(query);
+        if(updateMatcher.find()){
+          updateWrapper(dbName, updateMatcher);
+        }
+        else{
+          Matcher truncateMatch = TRUNCATE_QUERY_FINAL.matcher(query);
+          if (truncateMatch.find()) {
+            truncateWrapper(dbName, truncateMatch);
+          }
+        }
       }
     }
   }
@@ -54,7 +74,7 @@ public class QueryParser {
     //TODO: Add logs here only
     boolean status = tb.create(tableName,"DUMMY",dbName,columns,values);
 
-    System.out.println(status);
+    //System.out.println(status);
   }
 
   //TODO: Complete All parsers(Create(with PK and FK), UPDATE, SELECT, INSERT, DROP, TRUNCATE, Database (Create, Drop, use)
@@ -63,5 +83,12 @@ public class QueryParser {
   //TODO: DUMPS and take back DUMPS and transaction
   public void selectWrapper(String dbName, Matcher queryMatcher){
 
+  }
+  public void updateWrapper(String dbName, Matcher queryMatcher){
+    System.out.printf("Update QUERY Parser");
+  }
+
+  public void truncateWrapper(String dbName, Matcher truncateMatch){
+    System.out.printf("Truncate QUERY Parser");
   }
 }
