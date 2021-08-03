@@ -24,8 +24,7 @@ public class ShowUserQuery {
         case "1":
           System.out.println("Please enter your Query");
           String query=sc.nextLine();
-          QueryParser queryParser=new QueryParser();
-          queryParser.parseQuery("Test",query);
+          qp.parseQuery("Test",query);
           break;
         case "2":
           table.erd("Test");

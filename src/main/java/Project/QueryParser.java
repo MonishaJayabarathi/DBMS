@@ -57,8 +57,8 @@ public class QueryParser {
   Table tb = new Table();
   DataBase db = new DataBase();
 
-  public void parseQuery(String dbName, String query) throws IOException {
-
+  public String parseQuery(String dbName, String query) throws IOException {
+    dbName=db.currentDatabase;
     File ql = new File(LOCAL_PATH + "query_logs.txt");
     File el = new File(LOCAL_PATH + "event_logs.txt");
 
@@ -108,6 +108,8 @@ public class QueryParser {
     } else {
       System.out.println("Please enter a valid query");
     }
+
+    return db.currentDatabase;
   }
 
   public String getDetails(String dbName) throws IOException {
@@ -134,7 +136,9 @@ public class QueryParser {
     }
     FileWriter glWriter = new FileWriter(gl, true);
     glWriter.append(queryType).append(" QUERY with Status of ").append(String.valueOf(status)).append(" was executed in ").append(String.valueOf(time)).append(" nano seconds").append("\n");
-    glWriter.append("\t").append(getDetails(dbName)).append("\n");
+    if(dbName != null) {
+      glWriter.append("\t").append(getDetails(dbName)).append("\n");
+    }
     glWriter.close();
   }
 
@@ -154,7 +158,7 @@ public class QueryParser {
     long endTime = System.nanoTime();
     long executionTime = endTime - startTime;
 
-    generalLogWriter("CREATE DATABASE", status, executionTime, "null", "null");
+    generalLogWriter("CREATE DATABASE", status, executionTime, null, "null");
   }
 
   public void databaseUseWrapper(Matcher queryMatcher) throws IOException {
@@ -163,7 +167,7 @@ public class QueryParser {
     long endTime = System.nanoTime();
     long executionTime = endTime - startTime;
 
-    generalLogWriter("USE DATABASE", true, executionTime, "null", "null");
+    generalLogWriter("USE DATABASE", true, executionTime, null, "null");
   }
 
   public void createWrapper(String dbName, Matcher queryMatcher) throws IOException {
