@@ -1,0 +1,8 @@
+4 WAS give by user at 2021-08-03T13:43:37.141225800
+1 WAS give by user at 2021-08-03T14:34:27.971311600
+PersonID int, WAS give by user at 2021-08-03T14:36:14.489134500
+CREATE student (erson_id int, first_name varchar(25), last_name varchar(5), city varchar(25), contact_number varchar(0); WAS give by user at 2021-08-03T14:41:15.588336100
+SELECT COL1 FROM ADITYA2 WHERE COL1=COL1; WAS give by user at 2021-08-03T14:43:42.271473100
+CREATE student (person_id int, first_name varchar(25), last_name WAS give by user at 2021-08-03T14:49:42.665157800
+CREATE TABLE student_information (student_id int PK,first_name char FK,last_name char, contact_number char REFERENCES grade student_id); WAS give by user at 2021-08-03T14:52:31.046992800
+CREATE TABLE ADITYA3 (COL1 char PK,COL3 int FK REFERENCES table col3); WAS give by user at 2021-08-03T14:53:15.644870700

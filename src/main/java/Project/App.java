@@ -15,8 +15,8 @@ public class App
         Table tb = new Table();
 //        // Test Create Database
         DataBase db = new DataBase();
-//        db.create("Test");
-        db.use("Test");
+        db.create("Student");
+        db.use("Student");
 
         // Test Create table
 //
@@ -26,6 +26,8 @@ public class App
     ArrayList<String> valuesTypes = new ArrayList<>();
     valuesTypes.add("int");
     valuesTypes.add("char");
+    //CREATE student (person_id int, first_name varchar(25), last_name
+        // varchar(25), city varchar(25), contact_number varchar(10);
 //    System.out.println(tb.getPrimaryKeyColumn("Test","ADITYA2"));
  //   tb.create("Test1","aditya","Test",columns,valuesTypes);
  //   tb.create("Test2","aditya","Test",columns,valuesTypes);
@@ -42,7 +44,7 @@ public class App
 //
 //        QueryParser qp = new QueryParser();
 //////        Create Query PARSER TEST
-        QueryParser qp = new QueryParser();
+ //       QueryParser qp = new QueryParser();
 //        String CREATE_QUERY = "CREATE TABLE ADITYA3 (COL1 char PK,COL3 int FK REFERENCES table col3);";
 //        qp.parseQuery(db.currentDatabase, CREATE_QUERY);
 
@@ -64,9 +66,9 @@ public class App
 //        columns.add("*");
 //        System.out.println( tb.select("ADITYA2","DUMMY","Test",columns,"COL3","=","val4"));
 
-        String SELECT_QUERY = "SELECT * FROM ADITYA2;";
+ //       String SELECT_QUERY = "SELECT * FROM ADITYA2;";
 //        qp.parseQuery(db.currentDatabase,SELECT_QUERY);
-        SELECT_QUERY = "SELECT COL1 FROM ADITYA2 WHERE COL1=COL1;";
-        qp.parseQuery(db.currentDatabase,SELECT_QUERY);
+ //       SELECT_QUERY = "SELECT COL1 FROM ADITYA2 WHERE COL1=COL1;";
+  //      qp.parseQuery(db.currentDatabase,SELECT_QUERY);
     }
 }
