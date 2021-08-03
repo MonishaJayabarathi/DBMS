@@ -30,7 +30,6 @@ public class LoginUser  {
         String randomElement = securityQuestionList.get(rand.nextInt(securityQuestionList.size()));
         System.out.println(randomElement);
         int questionIndex=securityQuestionList.indexOf(randomElement);
-        System.out.println(questionIndex);
         String securityAnswer=sc.nextLine();
 
         final String passwordSha256Hash = HashAlgorithmUtil.getSHA256Hash(password);
@@ -43,15 +42,10 @@ public class LoginUser  {
         while ((s = br.readLine()) != null)   //Reading Content from the file
         {
             words = s.split(" "); //Split the word using space
-            if (words[0].equals(username) && words[1].equals(password) && words[(questionIndex+2)].equalsIgnoreCase(securityAnswer)) {
-                    return true;
-                }else{
-                    System.out.println("Password or emailId or Security " +
-                        "Answer is incorrect");
-                    return false;
-                }
+            if (words[0].equals(username) && words[1].equals(password) && (words[(questionIndex + 2)].equalsIgnoreCase(securityAnswer))) {
+                return true;
+            }
         }
         return false;
     }
 }
-

@@ -13,7 +13,7 @@ public class ShowUserQuery {
     Scanner sc=new Scanner(System.in);
     Table table=new Table();
     while (true) {
-      System.out.println("1. EXECUTE QUERY");
+      System.out.println("\n1. EXECUTE QUERY");
       System.out.println("2. Export ERD database");
       System.out.println("3. Export Dumps database");
       System.out.println("4. Exit");
@@ -32,8 +32,7 @@ public class ShowUserQuery {
         case "3":
           table.dumps("Test");
         case "4":
-
-
+          return;
         default:
           break;
       }
