@@ -202,7 +202,8 @@ public class Table {
    * @return
    * @throws IOException
    */
-  public boolean select(String tableName, String userName, String databaseName, ArrayList<String> columns,
+  public boolean select(String tableName, String databaseName,
+                        ArrayList<String> columns,
                         String key, String condition, String value) throws IOException {
     File tableFile = new File(LOCAL_PATH + "/" + databaseName + "/" + tableName + ".txt");
     if (!tableFile.exists()) {

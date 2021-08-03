@@ -26,7 +26,7 @@ public class QueryParser {
   public String CREATE_QUERY_INNER = "\\(((?:\\w+\\s\\w+\\(?[0-9]*\\)?,?)+)\\);";
   public Pattern CREATE_QUERY_FINAL = Pattern.compile(CREATE_QUERY_OUTER+CREATE_QUERY_INNER);
 
-  public String SELECT_QUERY_OUTER = "SELECT\\s(\\*)?(\\w+)?\\sFROM\\s(\\w+)";
+  public String SELECT_QUERY_OUTER = "SELECT\\s((\\*)?((\\w+)?((,(\\w+))*)?))\\sFROM\\s(\\w+)";
   public String SELECT_QUERY_CONDITION = "(\\sWHERE\\s(\\w+)=(\\w+))?;";
   public Pattern SELECT_QUERY_FINAL = Pattern.compile(SELECT_QUERY_OUTER+SELECT_QUERY_CONDITION);
 
@@ -157,11 +157,24 @@ public class QueryParser {
   //TODO: Generate Logs(all 3 types of logs)
 
   //TODO: DUMPS and take back DUMPS and transaction
-  public void selectWrapper(String dbName, Matcher queryMatcher){
+  public void selectWrapper(String dbName, Matcher queryMatcher) throws IOException {
+    System.out.println(queryMatcher.group(8));
     System.out.println(queryMatcher.group(1));
-    System.out.println(queryMatcher.group(2));
-    System.out.println(queryMatcher.group(3));
-    System.out.println(queryMatcher.group(4));
+    System.out.println(queryMatcher.group(10));
+    System.out.println(queryMatcher.group(11));
+
+    String tableName=queryMatcher.group(8);
+    String tableSet = queryMatcher.group(1);
+    ArrayList<String> columns = new ArrayList<>();
+    String[] colValSet = tableSet.split(",");
+    for (String colVal : colValSet) {
+      columns.add(colVal);
+    }
+    String conditionColumns=queryMatcher.group(10);
+    String conditionValues=queryMatcher.group(11);
+    String key=null;
+    tb.select(tableName,dbName,columns,key,conditionColumns,conditionValues);
+
   }
   public void updateWrapper(String dbName,
                             Matcher updateQueryMatcher) throws IOException {
