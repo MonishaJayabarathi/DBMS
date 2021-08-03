@@ -39,11 +39,30 @@ public class ShowUserQuery {
           System.out.println("Enter the database name");
           dbName =  sc.nextLine();
           table.executeDump(dbName);
+          break;
+        case "5":
+
         case "6":
           return;
         default:
           break;
       }
     }
+  }
+
+  public void queue () throws IOException {
+    System.out.println("Please enter your transaction queries");
+    String del = sc.nextLine();
+    QueryParser qp = new QueryParser();
+    if(del != "commit;") {
+      tr.append(del+"\n");
+      this.queue();
+    } else {
+      String[] q = tr.toString().split("\n");
+      for(String c: q) {
+        qp.parseQuery("Test", c);
+      }
+    }
+    qp.parseQuery("Test", "SELECT * FROM Test1");
   }
 }

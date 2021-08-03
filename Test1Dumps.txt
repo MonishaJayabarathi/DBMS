@@ -1,3 +1,3 @@
-CREATE table ADITYA3(COL1 char PK,COL3 int FK REFERENCES table col3,COL5 int);
-INSERT INTO /home/aditya/IdeaProjects/dwm/project/csci-5408-s2021-dp-10/Test1/ADITYA3(COL5,COL3,COL1) VALUES(val3,val2,v10);
-INSERT INTO /home/aditya/IdeaProjects/dwm/project/csci-5408-s2021-dp-10/Test1/ADITYA3(COL5,COL3,COL1) VALUES(val33,val22,val11);
+CREATE TABLE ADITYA3 (COL1 char PK,COL3 int FK REFERENCES table col3,COL5 int);
+INSERT INTO ADITYA3 (COL5,COL3,COL1) VALUES (val3,val2,v10);
+INSERT INTO ADITYA3 (COL5,COL3,COL1) VALUES (val33,val22,val11);

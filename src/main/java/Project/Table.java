@@ -177,6 +177,12 @@ public class Table {
         return false;
       }
       for (int i = 0; i < columns.size(); i++) {
+        if(columns.get(i).equals(pk)){
+          if (colValues.contains(values.get(i))){
+            System.out.println("Duplicate value present in PK");
+            return false;
+          }
+        }
         tableFileWriter.append(columns.get(i));
         tableFileWriter.append(" ");
         tableFileWriter.append(values.get(i));
@@ -507,7 +513,7 @@ public class Table {
         while ((st = br.readLine()) != null) {
           if (st.length() > 0) {
             if (count == 0) {
-              create = create + "CREATE table " + st + '(';
+              create = create + "CREATE TABLE " + st + " (";
               count = 1;
             } else {
               create = create + st + ",";
@@ -521,7 +527,7 @@ public class Table {
           }
         }
       } else if (file.getAbsolutePath().indexOf("lock.txt") < 0) {
-        String tablePath = file.getPath().replace("\\", ";");
+        String tablePath = file.getAbsolutePath().replace("/", ";");
         String[] pathSplits = tablePath.split(";");
         String tableName = pathSplits[pathSplits.length - 1];
         tableName = tableName.substring(0, tableName.indexOf("."));
@@ -536,7 +542,7 @@ public class Table {
           } else {
             columns = columns.substring(0, columns.length() - 1);
             values = values.substring(0, values.length() - 1);
-            built.append("INSERT INTO " + tableName + "(" + columns + ") VALUES(" + values + ");\n");
+            built.append("INSERT INTO ").append(tableName).append(" (").append(columns).append(") VALUES (").append(values).append(");\n");
             columns = "";
             values = "";
           }
@@ -547,7 +553,7 @@ public class Table {
     if (!dumpFile.exists()) {
       dumpFile.createNewFile();
     }
-    FileWriter dumpFileWriter = new FileWriter(dumpFile);
+    FileWriter dumpFileWriter = new FileWriter(dumpFile, true);
     dumpFileWriter.write(built.toString());
     dumpFileWriter.close();
     return true;
