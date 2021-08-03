@@ -15,17 +15,17 @@ public class App
         Table tb = new Table();
 //        // Test Create Database
         DataBase db = new DataBase();
-        db.create("Student");
-        db.use("Student");
+       // db.create("Student");
+        db.use("Test");
 
         // Test Create table
 //
-    ArrayList<String> columns = new ArrayList<>();
-    columns.add("C1");
-    columns.add("C2");
-    ArrayList<String> valuesTypes = new ArrayList<>();
-    valuesTypes.add("int");
-    valuesTypes.add("char");
+//    ArrayList<String> columns = new ArrayList<>();
+//    columns.add("C1");
+//    columns.add("C2");
+  //  ArrayList<String> valuesTypes = new ArrayList<>();
+  //  valuesTypes.add("int");
+ //   valuesTypes.add("char");
     //CREATE student (person_id int, first_name varchar(25), last_name
         // varchar(25), city varchar(25), contact_number varchar(10);
 //    System.out.println(tb.getPrimaryKeyColumn("Test","ADITYA2"));
@@ -62,9 +62,9 @@ public class App
 //        String UPDATE_QUERY = "UPDATE ADITYA2 SET COL1=v10 WHERE COL3=val4;";
 
         // SELECT QUERY TESTER
-      //  ArrayList<String> columns = new ArrayList<>();
-//        columns.add("*");
-//        System.out.println( tb.select("ADITYA2","DUMMY","Test",columns,"COL3","=","val4"));
+        ArrayList<String> columns = new ArrayList<>();
+        columns.add("*");
+       //System.out.println( tb.select("ADITYA2","DUMMY","Test",columns,"COL3","=","val4"));
 
  //       String SELECT_QUERY = "SELECT * FROM ADITYA2;";
 //        qp.parseQuery(db.currentDatabase,SELECT_QUERY);

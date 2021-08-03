@@ -35,6 +35,10 @@ public class LoginUser  {
         final String passwordSha256Hash = HashAlgorithmUtil.getSHA256Hash(password);
         password = passwordSha256Hash;
 
+        final String securityAnswerHash = HashAlgorithmUtil.getSHA256Hash(securityAnswer);
+        securityAnswer=securityAnswerHash;
+
+
         FileReader fr = new FileReader(LOGIN_CREDENTIALS_FILE);
         BufferedReader br = new BufferedReader(fr); //Creation of BufferedReader object
         String s;

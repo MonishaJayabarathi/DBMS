@@ -3,3 +3,8 @@ CREATE QUERY with Status of true was executed in 5227290 nano seconds
 CREATE QUERY with Status of true was executed in 5065016 nano seconds
 CREATE QUERY with Status of true was executed in 5062721 nano seconds
 CREATE QUERY with Status of true was executed in 4596731 nano seconds
+UPDATE QUERY with Status of false was executed in 21472600 nano seconds
+UPDATE QUERY with Status of false was executed in 24462000 nano seconds
+UPDATE QUERY with Status of false was executed in 23120400 nano seconds
+UPDATE QUERY with Status of false was executed in 22891900 nano seconds
+UPDATE QUERY with Status of false was executed in 15749200 nano seconds

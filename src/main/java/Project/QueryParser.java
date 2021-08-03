@@ -25,19 +25,19 @@ public class QueryParser {
   // It will take CREATE TABLE tableName
   public String CREATE_QUERY_OUTER = "CREATE\\sTABLE\\s(\\w+)\\s";
   public String CREATE_QUERY_INNER = "\\(((?:\\w+\\s\\w+\\(?[0-9]*\\)?,?)+)\\);";
-  public Pattern CREATE_QUERY_FINAL = Pattern.compile(CREATE_QUERY_OUTER + CREATE_QUERY_INNER);
+  public Pattern CREATE_QUERY_FINAL = Pattern.compile(CREATE_QUERY_OUTER+CREATE_QUERY_INNER);
 
-  public String SELECT_QUERY_OUTER = "SELECT\\s(\\*)?(\\w+)?(,((\\w+))*)?\\sFROM\\s(\\w+)";
+  public String SELECT_QUERY_OUTER = "SELECT\\s((\\*)?((\\w+)?((,(\\w+))*)?))\\sFROM\\s(\\w+)";
   public String SELECT_QUERY_CONDITION = "(\\sWHERE\\s(\\w+)=(\\w+))?;";
-  public Pattern SELECT_QUERY_FINAL = Pattern.compile(SELECT_QUERY_OUTER + SELECT_QUERY_CONDITION);
+  public Pattern SELECT_QUERY_FINAL = Pattern.compile(SELECT_QUERY_OUTER+SELECT_QUERY_CONDITION);
 
   public String INSERT_QUERY_OUTER = "INSERT\\sINTO\\s(\\w+)\\s\\(([\\s\\S]+)\\)";
   public String INSERT_VALUES_QUERY = "\\sVALUES\\s\\(([\\s\\S]+)\\);";
-  public Pattern INSERT_QUERY_FINAL = Pattern.compile(INSERT_QUERY_OUTER + INSERT_VALUES_QUERY);
+  public Pattern INSERT_QUERY_FINAL = Pattern.compile(INSERT_QUERY_OUTER+INSERT_VALUES_QUERY);
 
   public String UPDATE_QUERY_OUTER = "UPDATE\\s(\\w+)\\sSET\\s(((\\w+)=(\\w+))(,\\s((\\w+)=(\\w+)))*)";
   public String UPDATE_QUERY_CONDITION = "\\sWHERE\\s((\\w+)=(\\w+));";
-  public Pattern UPDATE_QUERY_FINAL = Pattern.compile(UPDATE_QUERY_OUTER + UPDATE_QUERY_CONDITION);
+  public Pattern UPDATE_QUERY_FINAL = Pattern.compile(UPDATE_QUERY_OUTER+UPDATE_QUERY_CONDITION);
 
   public String TRUNCATE_QUERY = "TRUNCATE TABLE\\s(\\w+);";
   public Pattern TRUNCATE_QUERY_FINAL = Pattern.compile(TRUNCATE_QUERY);
@@ -159,6 +159,7 @@ public class QueryParser {
     }
 
 
+
     System.out.println(keySet);
     //TODO: Add logs here only
     long startTime = System.nanoTime();
@@ -211,18 +212,24 @@ public class QueryParser {
   //TODO: Generate Logs(all 3 types of logs)
 
   //TODO: DUMPS and take back DUMPS and transaction
-  public void selectWrapper(String dbName, Matcher queryMatcher) {
+  public void selectWrapper(String dbName, Matcher queryMatcher) throws IOException {
+    System.out.println(queryMatcher.group(8));
     System.out.println(queryMatcher.group(1));
-    System.out.println(queryMatcher.group(2));
-    System.out.println(queryMatcher.group(3));
-    System.out.println(queryMatcher.group(4));
+    System.out.println(queryMatcher.group(10));
+    System.out.println(queryMatcher.group(11));
 
+    String tableName=queryMatcher.group(8);
+    String tableSet = queryMatcher.group(1);
+    ArrayList<String> columns = new ArrayList<>();
+    String[] colValSet = tableSet.split(",");
+    for (String colVal : colValSet) {
+      columns.add(colVal);
+    }
+    String conditionColumns=queryMatcher.group(10);
+    String conditionValues=queryMatcher.group(11);
+    String key=null;
+    tb.select(tableName,dbName,columns,key,conditionColumns,conditionValues);
 
-//    if (status) {
-//      eventLogWriter("SUCCESS: Display table \"" + dbName + "." + tableName + "\"");
-//    } else {
-//      eventLogWriter("FAILED: Display table  \"" + dbName + "." + tableName + "\"");
-//    }
   }
 
 
