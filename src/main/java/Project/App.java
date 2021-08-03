@@ -15,8 +15,15 @@ public class App
         Table tb = new Table();
 //        // Test Create Database
         DataBase db = new DataBase();
+
+//        String Create_DB_Query = "CREATE DATABASE Test123;";
+//        QueryParser qp = new QueryParser();
+////        qp.parseQuery(null,Create_DB_Query);
+//
+//        String Use_DB_Query = "USE Test123;";
+//        qp.parseQuery(null,Use_DB_Query);
        // db.create("Student");
-        db.use("Test");
+//        db.use("Test");
 
         // Test Create table
 //
@@ -62,8 +69,8 @@ public class App
 //        String UPDATE_QUERY = "UPDATE ADITYA2 SET COL1=v10 WHERE COL3=val4;";
 
         // SELECT QUERY TESTER
-        ArrayList<String> columns = new ArrayList<>();
-        columns.add("*");
+//        ArrayList<String> columns = new ArrayList<>();
+//        columns.add("*");
        //System.out.println( tb.select("ADITYA2","DUMMY","Test",columns,"COL3","=","val4"));
 
  //       String SELECT_QUERY = "SELECT * FROM ADITYA2;";

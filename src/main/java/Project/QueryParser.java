@@ -46,10 +46,16 @@ public class QueryParser {
   public String DROP_QUERY_OUTER = "DROP TABLE\\s(\\w+);";
   public Pattern DROP_QUERY_FINAL = Pattern.compile(DROP_QUERY_OUTER);
 
+  public String DATABASE_CREATE = "CREATE\\sDATABASE\\s(\\w+);";
+  public Pattern DATABASE_CREATE_FINAL = Pattern.compile(DATABASE_CREATE);
+
+  public String DATABASE_USE = "USE\\s(\\w+);";
+  public Pattern DATABASE_USE_FINAL = Pattern.compile(DATABASE_USE);
 
   HashMap<String, ArrayList<String>> queryTracker = new HashMap<>();
 
   Table tb = new Table();
+  DataBase db = new DataBase();
 
   public void parseQuery(String dbName, String query) throws IOException {
 
@@ -80,6 +86,8 @@ public class QueryParser {
     Matcher updateMatcher = UPDATE_QUERY_FINAL.matcher(query);
     Matcher truncateMatch = TRUNCATE_QUERY_FINAL.matcher(query);
     Matcher dropTableMatch = DROP_QUERY_FINAL.matcher(query);
+    Matcher databaseCreateMatcher = DATABASE_CREATE_FINAL.matcher(query);
+    Matcher databaseUseMatcher = DATABASE_USE_FINAL.matcher(query);
 
     if (createMatch.find()) {
       createWrapper(dbName, createMatch);
@@ -93,6 +101,10 @@ public class QueryParser {
       dropTableWrapper(dbName, truncateMatch);
     } else if (insertMatch.find()) {
       insertWrapper(dbName, insertMatch);
+    } else if (databaseCreateMatcher.find()) {
+      databaseCreateWrapper(databaseCreateMatcher);
+    } else if(databaseUseMatcher.find()){
+      databaseUseWrapper(databaseUseMatcher);
     } else {
       System.out.println("Please enter a valid query");
     }
@@ -134,6 +146,24 @@ public class QueryParser {
       elWriter.append(event).append("\n");
       elWriter.close();
     }
+  }
+
+  public void databaseCreateWrapper(Matcher queryMatcher) throws IOException {
+    long startTime = System.nanoTime();
+    boolean status = db.create(queryMatcher.group(1));
+    long endTime = System.nanoTime();
+    long executionTime = endTime - startTime;
+
+    generalLogWriter("CREATE DATABASE", status, executionTime, "null", "null");
+  }
+
+  public void databaseUseWrapper(Matcher queryMatcher) throws IOException {
+    long startTime = System.nanoTime();
+    db.use(queryMatcher.group(1));
+    long endTime = System.nanoTime();
+    long executionTime = endTime - startTime;
+
+    generalLogWriter("USE DATABASE", true, executionTime, "null", "null");
   }
 
   public void createWrapper(String dbName, Matcher queryMatcher) throws IOException {
@@ -214,10 +244,6 @@ public class QueryParser {
 
   //TODO: DUMPS and take back DUMPS and transaction
   public void selectWrapper(String dbName, Matcher queryMatcher) throws IOException {
-    System.out.println(queryMatcher.group(8));
-    System.out.println(queryMatcher.group(1));
-    System.out.println(queryMatcher.group(10));
-    System.out.println(queryMatcher.group(11));
 
     String tableName=queryMatcher.group(8);
     String tableSet = queryMatcher.group(1);
