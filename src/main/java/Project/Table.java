@@ -196,7 +196,6 @@ public class Table {
    * It can handle simple WHERE clause like WHERE col1=value
    *
    * @param tableName
-   * @param userName
    * @param databaseName
    * @param columns
    * @return

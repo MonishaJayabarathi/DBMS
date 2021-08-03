@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -220,16 +221,15 @@ public class QueryParser {
 
     String tableName=queryMatcher.group(8);
     String tableSet = queryMatcher.group(1);
-    ArrayList<String> columns = new ArrayList<>();
     String[] colValSet = tableSet.split(",");
-    for (String colVal : colValSet) {
-      columns.add(colVal);
-    }
+    ArrayList<String> columns = new ArrayList<>(Arrays.asList(colValSet));
     String conditionColumns=queryMatcher.group(10);
     String conditionValues=queryMatcher.group(11);
-    String key=null;
-    tb.select(tableName,dbName,columns,key,conditionColumns,conditionValues);
-
+    long startTime = System.nanoTime();
+    boolean status = tb.select(tableName,dbName,columns,conditionColumns,null,conditionValues);
+    long endTime = System.nanoTime();
+    long executionTime = endTime - startTime;
+    generalLogWriter("SELECT", status, executionTime, dbName, tableName);
   }
 
 
