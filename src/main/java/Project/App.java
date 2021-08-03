@@ -55,6 +55,28 @@ public class App
 //        String CREATE_QUERY = "CREATE TABLE ADITYA3 (COL1 char PK,COL3 int FK REFERENCES table col3);";
 //        qp.parseQuery(db.currentDatabase, CREATE_QUERY);
 
+//        CREATE TABLE ADITYA3 (COL1 char PK,COL3 int FK REFERENCES table col3,COL5 int);
+//        INSERT INTO ADITYA3 (COL1,COL3,COL5) VALUES (val1,val2,val3);
+//        INSERT INTO ADITYA3 (COL1,COL3,COL5) VALUES (val11,val22,val33);
+
+//        SELECT COL1,COL3 FROM ADITYA3;
+
+//        SELECT COL1,COL3 FROM ADITYA3 WHERE COL1=v10;
+
+
+//        UPDATE ADITYA3 SET COL1=v10 WHERE COL3=val2;
+
+
+
+
+
+
+
+
+
+
+
+
 //        //Update Query Parser Test
 //        QueryParser queryParser=new QueryParser();
 //        String UPDATE_QUERY="UPDATE Test1 SET C1=V1, C2=V3 WHERE C2=V2;";

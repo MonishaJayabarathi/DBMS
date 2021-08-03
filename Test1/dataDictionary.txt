@@ -1,0 +1,5 @@
+ADITYA3
+COL1 char PK
+COL3 int FK REFERENCES table col3
+COL5 int
+

@@ -552,4 +552,22 @@ public class Table {
     dumpFileWriter.close();
     return true;
   }
+
+  public boolean executeDump(String databaseName) throws IOException {
+    QueryParser qp = new QueryParser();
+    File dumpFile = new File(LOCAL_PATH + databaseName + "Dumps.txt");
+    if (!dumpFile.exists()) {
+      System.out.println("Database Dump not generated");
+      return false;
+    }
+    BufferedReader br = new BufferedReader(new FileReader(dumpFile));
+    String st;
+    qp.parseQuery(null,"CREATE DATABASE "+databaseName+";");
+    qp.parseQuery(null,"USE "+databaseName+";");
+    while ((st = br.readLine()) != null) {
+      System.out.println(st);
+      qp.parseQuery(databaseName, st);
+    }
+    return true;
+  }
 }

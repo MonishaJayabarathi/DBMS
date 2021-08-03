@@ -1,3 +1,33 @@
 CREATE DATABASE QUERY with Status of true was executed in 10131597 nano seconds
 USE DATABASE QUERY with Status of true was executed in 11134 nano seconds
 USE DATABASE QUERY with Status of true was executed in 14190 nano seconds
+CREATE QUERY with Status of false was executed in 7958614 nano seconds
+CREATE QUERY with Status of false was executed in 7958614 nano seconds
+USE DATABASE QUERY with Status of true was executed in 7489 nano seconds
+CREATE QUERY with Status of false was executed in 7750501 nano seconds
+CREATE QUERY with Status of false was executed in 7750501 nano seconds
+USE DATABASE QUERY with Status of true was executed in 11374 nano seconds
+CREATE QUERY with Status of true was executed in 6975407 nano seconds
+	Test1 database has 3 tables. Table ADITYA3 has 1 records. 
+CREATE QUERY with Status of true was executed in 6975407 nano seconds
+	Test1 database has 3 tables. Table ADITYA3 has 1 records. 
+INSERT QUERY with Status of true was executed in 2100483 nano seconds
+	Test1 database has 3 tables. Table ADITYA3 has 1 records. 
+INSERT QUERY with Status of true was executed in 869748 nano seconds
+	Test1 database has 3 tables. Table ADITYA3 has 1 records. 
+SELECT QUERY with Status of true was executed in 3303345 nano seconds
+	Test1 database has 3 tables. Table ADITYA3 has 1 records. 
+SELECT QUERY with Status of true was executed in 343032 nano seconds
+	Test1 database has 3 tables. Table ADITYA3 has 1 records. 
+SELECT QUERY with Status of true was executed in 681947 nano seconds
+	Test1 database has 3 tables. Table ADITYA3 has 1 records. 
+UPDATE QUERY with Status of true was executed in 4690957 nano seconds
+	Test1 database has 3 tables. Table ADITYA3 has 1 records. 
+SELECT QUERY with Status of true was executed in 770058 nano seconds
+	Test1 database has 3 tables. Table ADITYA3 has 1 records. 
+SELECT QUERY with Status of true was executed in 547561 nano seconds
+	Test1 database has 3 tables. Table ADITYA3 has 1 records. 
+CREATE DATABASE QUERY with Status of false was executed in 887130 nano seconds
+USE DATABASE QUERY with Status of true was executed in 6784 nano seconds
+CREATE DATABASE QUERY with Status of false was executed in 1195564 nano seconds
+USE DATABASE QUERY with Status of true was executed in 8243 nano seconds
