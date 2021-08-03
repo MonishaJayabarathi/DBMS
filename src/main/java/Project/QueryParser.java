@@ -26,7 +26,7 @@ public class QueryParser {
   public String CREATE_QUERY_INNER = "\\(((?:\\w+\\s\\w+\\(?[0-9]*\\)?,?)+)\\);";
   public Pattern CREATE_QUERY_FINAL = Pattern.compile(CREATE_QUERY_OUTER+CREATE_QUERY_INNER);
 
-  public String SELECT_QUERY_OUTER = "SELECT\\s(\\*)?(\\w+)?\\sFROM\\s(\\w+)";
+  public String SELECT_QUERY_OUTER = "SELECT\\s(\\*)?(\\w+)?(,((\\w+))*)?\\sFROM\\s(\\w+)";
   public String SELECT_QUERY_CONDITION = "(\\sWHERE\\s(\\w+)=(\\w+))?;";
   public Pattern SELECT_QUERY_FINAL = Pattern.compile(SELECT_QUERY_OUTER+SELECT_QUERY_CONDITION);
 
@@ -79,6 +79,8 @@ public class QueryParser {
       dropTableWrapper(dbName, truncateMatch);
     } else if (insertMatch.find()) {
       insertWrapper(dbName, insertMatch);
+    } else {
+      System.out.println("Please enter a valid query");
     }
   }
 
