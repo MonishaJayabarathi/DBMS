@@ -67,7 +67,7 @@ public class QueryParser {
     qlWriter.close();
 
     FileWriter elWriter = new FileWriter(el, true);
-    elWriter.append(LocalDateTime.now().toString()).append(" : ").append(query).append(" WAS give by user at ").append(
+    elWriter.append(LocalDateTime.now().toString()).append(" : ").append(query).append(
         "\n");
     elWriter.close();
 
@@ -145,9 +145,9 @@ public class QueryParser {
     long executionTime = endTime - startTime;
 
     if (status) {
-      eventLogWriter("SUCCESS: Creation of new table \"" + tableName + "\"");
+      eventLogWriter("SUCCESS: Creation of new table \"" + dbName + "." + tableName + "\"");
     } else {
-      eventLogWriter("FAILED: Creation of new table \"" + tableName + "\"");
+      eventLogWriter("FAILED: Creation of new table \"" + dbName + "." + tableName + "\"");
     }
     generalLogWriter("CREATE", status, executionTime);
     System.out.println(status);
@@ -175,9 +175,9 @@ public class QueryParser {
     long executionTime = endTime - startTime;
 
     if (status) {
-      eventLogWriter("SUCCESS: Insertion into table \"" + tableName + "\"");
+      eventLogWriter("SUCCESS: Insertion into table \"" + dbName + "." + tableName + "\"");
     } else {
-      eventLogWriter("FAILED: Insertion into table \"" + tableName + "\"");
+      eventLogWriter("FAILED: Insertion into table \"" + dbName + "." + tableName + "\"");
     }
     generalLogWriter("INSERT", status, executionTime);
     System.out.println(status);
@@ -195,9 +195,9 @@ public class QueryParser {
     System.out.println(queryMatcher.group(4));
 
 //    if (status) {
-//      eventLogWriter("SUCCESS: Display table \"" + tableName + "\"");
+//      eventLogWriter("SUCCESS: Display table \"" + dbName + "." + tableName + "\"");
 //    } else {
-//      eventLogWriter("FAILED: Display table  \"" + tableName + "\"");
+//      eventLogWriter("FAILED: Display table  \"" + dbName + "." + tableName + "\"");
 //    }
   }
 
@@ -229,9 +229,9 @@ public class QueryParser {
     long executionTime = endTime - startTime;
 
     if (status) {
-      eventLogWriter("SUCCESS: Updating table \"" + tableName + "\"");
+      eventLogWriter("SUCCESS: Updating table \"" + dbName + "." + tableName + "\"");
     } else {
-      eventLogWriter("FAILED: Updating table  \"" + tableName + "\"");
+      eventLogWriter("FAILED: Updating table  \"" + dbName + "." + tableName + "\"");
     }
     generalLogWriter("UPDATE", status, executionTime);
   }
@@ -246,9 +246,9 @@ public class QueryParser {
     long executionTime = endTime - startTime;
 
     if (status) {
-      eventLogWriter("SUCCESS: Truncate table \"" + tableName + "\"");
+      eventLogWriter("SUCCESS: Truncate table \"" + dbName + "." + tableName + "\"");
     } else {
-      eventLogWriter("FAILED: Truncate table  \"" + tableName + "\"");
+      eventLogWriter("FAILED: Truncate table  \"" + dbName + "." + tableName + "\"");
     }
     generalLogWriter("TRUNCATE TABLE", status, executionTime);
   }
@@ -262,9 +262,9 @@ public class QueryParser {
     long executionTime = endTime - startTime;
 
     if (status) {
-      eventLogWriter("SUCCESS: DROP table \"" + tableName + "\"");
+      eventLogWriter("SUCCESS: DROP table \"" + dbName + "." + tableName + "\"");
     } else {
-      eventLogWriter("FAILED: DROP table  \"" + tableName + "\"");
+      eventLogWriter("FAILED: DROP table  \"" + dbName + "." + tableName + "\"");
     }
     generalLogWriter("DROP TABLE", status, executionTime);
   }
