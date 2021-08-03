@@ -1,8 +1,9 @@
 package Project;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +27,7 @@ public class QueryParser {
   public String CREATE_QUERY_INNER = "\\(((?:\\w+\\s\\w+\\(?[0-9]*\\)?,?)+)\\);";
   public Pattern CREATE_QUERY_FINAL = Pattern.compile(CREATE_QUERY_OUTER + CREATE_QUERY_INNER);
 
-  public String SELECT_QUERY_OUTER = "SELECT\\s(\\*)?(\\w+)?\\sFROM\\s(\\w+)";
+  public String SELECT_QUERY_OUTER = "SELECT\\s(\\*)?(\\w+)?(,((\\w+))*)?\\sFROM\\s(\\w+)";
   public String SELECT_QUERY_CONDITION = "(\\sWHERE\\s(\\w+)=(\\w+))?;";
   public Pattern SELECT_QUERY_FINAL = Pattern.compile(SELECT_QUERY_OUTER + SELECT_QUERY_CONDITION);
 
@@ -69,6 +70,7 @@ public class QueryParser {
     FileWriter elWriter = new FileWriter(el, true);
     elWriter.append(LocalDateTime.now().toString()).append(" : ").append(query).append(
         "\n");
+    elWriter.append(query).append(" WAS give by user at ").append(LocalDateTime.now().toString()).append("\n");
     elWriter.close();
 
     Matcher createMatch = CREATE_QUERY_FINAL.matcher(query);
@@ -90,16 +92,36 @@ public class QueryParser {
       dropTableWrapper(dbName, truncateMatch);
     } else if (insertMatch.find()) {
       insertWrapper(dbName, insertMatch);
+    } else {
+      System.out.println("Please enter a valid query");
     }
   }
 
-  public void generalLogWriter(String queryType, boolean status, long time) throws IOException {
+  public String getDetails(String dbName) throws IOException {
+    StringBuilder data = new StringBuilder();
+    String path = LOCAL_PATH + dbName;
+    File folder = new File(path);
+    File[] files = folder.listFiles();
+    data.append(dbName + " database has " + files.length + " tables. ");
+    for (File file : files) {
+      if (file.getName().indexOf("dataDictionary") < 0 && file.getName().indexOf("lock") < 0) {
+        String content = Files.readString(Path.of(file.getAbsolutePath()), StandardCharsets.US_ASCII);
+        int rows = content.split("\n\r").length;
+        String name = file.getName().substring(0, file.getName().indexOf("."));
+        data.append("Table " + name + " has " + rows + " records. ");
+      }
+    }
+    return data.toString();
+  }
+
+  public void generalLogWriter(String queryType, boolean status, long time, String dbName, String tableName) throws IOException {
     File gl = new File(LOCAL_PATH + "general_logs.txt");
     if (gl.createNewFile()) {
       System.out.println("Created new General Log File");
     }
     FileWriter glWriter = new FileWriter(gl, true);
     glWriter.append(queryType).append(" QUERY with Status of ").append(String.valueOf(status)).append(" was executed in ").append(String.valueOf(time)).append(" nano seconds").append("\n");
+    glWriter.append("\t").append(getDetails(dbName)).append("\n");
     glWriter.close();
   }
 
@@ -144,12 +166,13 @@ public class QueryParser {
     long endTime = System.nanoTime();
     long executionTime = endTime - startTime;
 
+    generalLogWriter("CREATE", status, executionTime, dbName, tableName);
     if (status) {
       eventLogWriter("SUCCESS: Creation of new table \"" + dbName + "." + tableName + "\"");
     } else {
       eventLogWriter("FAILED: Creation of new table \"" + dbName + "." + tableName + "\"");
     }
-    generalLogWriter("CREATE", status, executionTime);
+    generalLogWriter("CREATE", status, executionTime, dbName, tableName);
     System.out.println(status);
   }
 
@@ -179,7 +202,7 @@ public class QueryParser {
     } else {
       eventLogWriter("FAILED: Insertion into table \"" + dbName + "." + tableName + "\"");
     }
-    generalLogWriter("INSERT", status, executionTime);
+    generalLogWriter("INSERT", status, executionTime, dbName, tableName);
     System.out.println(status);
 
   }
@@ -194,12 +217,14 @@ public class QueryParser {
     System.out.println(queryMatcher.group(3));
     System.out.println(queryMatcher.group(4));
 
+
 //    if (status) {
 //      eventLogWriter("SUCCESS: Display table \"" + dbName + "." + tableName + "\"");
 //    } else {
 //      eventLogWriter("FAILED: Display table  \"" + dbName + "." + tableName + "\"");
 //    }
   }
+
 
   public void updateWrapper(String dbName,
                             Matcher updateQueryMatcher) throws IOException {
@@ -233,7 +258,7 @@ public class QueryParser {
     } else {
       eventLogWriter("FAILED: Updating table  \"" + dbName + "." + tableName + "\"");
     }
-    generalLogWriter("UPDATE", status, executionTime);
+    generalLogWriter("UPDATE", status, executionTime, dbName, tableName);
   }
 
 
@@ -250,8 +275,9 @@ public class QueryParser {
     } else {
       eventLogWriter("FAILED: Truncate table  \"" + dbName + "." + tableName + "\"");
     }
-    generalLogWriter("TRUNCATE TABLE", status, executionTime);
+    generalLogWriter("TRUNCATE TABLE", status, executionTime, dbName, tableName);
   }
+
 
   public void dropTableWrapper(String dbName, Matcher dropTableMatch) throws IOException {
     System.out.println("drop QUERY Parser");
@@ -266,6 +292,6 @@ public class QueryParser {
     } else {
       eventLogWriter("FAILED: DROP table  \"" + dbName + "." + tableName + "\"");
     }
-    generalLogWriter("DROP TABLE", status, executionTime);
+    generalLogWriter("DROP TABLE", status, executionTime, dbName, tableName);
   }
 }
