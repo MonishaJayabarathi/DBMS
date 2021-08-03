@@ -52,12 +52,24 @@ public class QueryParser {
 
   public void parseQuery(String dbName, String query) throws IOException {
 
+    File ql = new File(LOCAL_PATH + "query_logs.txt");
     File el = new File(LOCAL_PATH + "event_logs.txt");
+
+    if (ql.createNewFile()) {
+      System.out.println("Created new Query Log File");
+    }
+
     if (el.createNewFile()) {
       System.out.println("Created new Event Log File");
     }
 
+    FileWriter qlWriter = new FileWriter(ql, true);
+    qlWriter.append(query).append(" WAS give by user at ").append(LocalDateTime.now().toString()).append("\n");
+    qlWriter.close();
+
     FileWriter elWriter = new FileWriter(el, true);
+    elWriter.append(LocalDateTime.now().toString()).append(" : ").append(query).append(
+        "\n");
     elWriter.append(query).append(" WAS give by user at ").append(LocalDateTime.now().toString()).append("\n");
     elWriter.close();
 
@@ -113,6 +125,16 @@ public class QueryParser {
     glWriter.close();
   }
 
+  public void eventLogWriter(String event) throws IOException {
+    File el = new File(LOCAL_PATH + "event_logs.txt");
+    if (el.exists()) {
+
+      FileWriter elWriter = new FileWriter(el, true);
+      elWriter.append(event).append("\n");
+      elWriter.close();
+    }
+  }
+
   public void createWrapper(String dbName, Matcher queryMatcher) throws IOException {
     // 0 index will have pk and 1 will have FK
     HashMap<String, String> keySet = new HashMap<>();
@@ -145,6 +167,12 @@ public class QueryParser {
     long executionTime = endTime - startTime;
 
     generalLogWriter("CREATE", status, executionTime, dbName, tableName);
+    if (status) {
+      eventLogWriter("SUCCESS: Creation of new table \"" + dbName + "." + tableName + "\"");
+    } else {
+      eventLogWriter("FAILED: Creation of new table \"" + dbName + "." + tableName + "\"");
+    }
+    generalLogWriter("CREATE", status, executionTime, dbName, tableName);
     System.out.println(status);
   }
 
@@ -169,6 +197,11 @@ public class QueryParser {
     long endTime = System.nanoTime();
     long executionTime = endTime - startTime;
 
+    if (status) {
+      eventLogWriter("SUCCESS: Insertion into table \"" + dbName + "." + tableName + "\"");
+    } else {
+      eventLogWriter("FAILED: Insertion into table \"" + dbName + "." + tableName + "\"");
+    }
     generalLogWriter("INSERT", status, executionTime, dbName, tableName);
     System.out.println(status);
 
@@ -183,7 +216,15 @@ public class QueryParser {
     System.out.println(queryMatcher.group(2));
     System.out.println(queryMatcher.group(3));
     System.out.println(queryMatcher.group(4));
+
+
+//    if (status) {
+//      eventLogWriter("SUCCESS: Display table \"" + dbName + "." + tableName + "\"");
+//    } else {
+//      eventLogWriter("FAILED: Display table  \"" + dbName + "." + tableName + "\"");
+//    }
   }
+
 
   public void updateWrapper(String dbName,
                             Matcher updateQueryMatcher) throws IOException {
@@ -212,6 +253,11 @@ public class QueryParser {
     long endTime = System.nanoTime();
     long executionTime = endTime - startTime;
 
+    if (status) {
+      eventLogWriter("SUCCESS: Updating table \"" + dbName + "." + tableName + "\"");
+    } else {
+      eventLogWriter("FAILED: Updating table  \"" + dbName + "." + tableName + "\"");
+    }
     generalLogWriter("UPDATE", status, executionTime, dbName, tableName);
   }
 
@@ -224,8 +270,14 @@ public class QueryParser {
     long endTime = System.nanoTime();
     long executionTime = endTime - startTime;
 
+    if (status) {
+      eventLogWriter("SUCCESS: Truncate table \"" + dbName + "." + tableName + "\"");
+    } else {
+      eventLogWriter("FAILED: Truncate table  \"" + dbName + "." + tableName + "\"");
+    }
     generalLogWriter("TRUNCATE TABLE", status, executionTime, dbName, tableName);
   }
+
 
   public void dropTableWrapper(String dbName, Matcher dropTableMatch) throws IOException {
     System.out.println("drop QUERY Parser");
@@ -235,6 +287,11 @@ public class QueryParser {
     long endTime = System.nanoTime();
     long executionTime = endTime - startTime;
 
+    if (status) {
+      eventLogWriter("SUCCESS: DROP table \"" + dbName + "." + tableName + "\"");
+    } else {
+      eventLogWriter("FAILED: DROP table  \"" + dbName + "." + tableName + "\"");
+    }
     generalLogWriter("DROP TABLE", status, executionTime, dbName, tableName);
   }
 }
