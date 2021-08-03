@@ -435,11 +435,15 @@ public class Table {
    * @param databaseName
    * @throws IOException
    */
-  public void erd(String databaseName) throws IOException {
+  public boolean erd(String databaseName) throws IOException {
     HashMap<String, ArrayList<String>> list = new HashMap<String, ArrayList<String>>();
 
     File dataDict = new File(LOCAL_PATH + databaseName + "/dataDictionary.txt");
 
+    if (!dataDict.exists()) {
+      System.out.println("Database doesn't exists");
+      return false;
+    }
     BufferedReader br = new BufferedReader(new FileReader(dataDict));
     String st;
     ArrayList<String> data = new ArrayList<String>();
@@ -482,6 +486,7 @@ public class Table {
       }
       System.out.println("\n---------------------------------------------------------------------------------");
     }
+    return true;
   }
 
   public boolean dumps(String databaseName) throws IOException {
@@ -494,7 +499,7 @@ public class Table {
     String st;
     StringBuilder built = new StringBuilder();
     BufferedReader br;
-    File[] files = folder.listFiles(); // get list of files in folderif (files != null && files.length > 0) {
+    File[] files = folder.listFiles();
     for (File file : files) {
       if (file.getAbsolutePath().indexOf("dataDictionary.tx") >= 0) {
         br = new BufferedReader(new FileReader(file.getAbsolutePath()));
@@ -539,11 +544,10 @@ public class Table {
         }
       }
     }
-    File dumpFile = new File(LOCAL_PATH + databaseName + "/" + "dumps.txt");
+    File dumpFile = new File(LOCAL_PATH  + "/" + databaseName + "Dumps.txt");
     if (!dumpFile.exists()) {
       dumpFile.createNewFile();
     }
-    System.out.println(built);
     FileWriter dumpFileWriter = new FileWriter(dumpFile);
     dumpFileWriter.write(built.toString());
     dumpFileWriter.close();

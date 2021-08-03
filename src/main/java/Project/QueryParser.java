@@ -1,8 +1,9 @@
 package Project;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +15,7 @@ import static Project.Constants.LOCAL_PATH;
 public class QueryParser {
   /**
    * Regex KT
-   *
+   * <p>
    * ? in regex to checkOccurrence
    * \s for whitespace
    * \w for word \w+ to select full word
@@ -51,13 +52,25 @@ public class QueryParser {
 
   public void parseQuery(String dbName, String query) throws IOException {
 
-    File el = new File(LOCAL_PATH+"event_logs.txt");
+    File ql = new File(LOCAL_PATH + "query_logs.txt");
+    File el = new File(LOCAL_PATH + "event_logs.txt");
+
+    if (ql.createNewFile()) {
+      System.out.println("Created new Query Log File");
+    }
+
     if (el.createNewFile()) {
       System.out.println("Created new Event Log File");
     }
 
+    FileWriter qlWriter = new FileWriter(ql, true);
+    qlWriter.append(query).append(" WAS give by user at ").append(LocalDateTime.now().toString()).append("\n");
+    qlWriter.close();
+
     FileWriter elWriter = new FileWriter(el, true);
-    elWriter.append(query).append(" WAS give by user at ").append( LocalDateTime.now().toString()).append("\n");
+    elWriter.append(LocalDateTime.now().toString()).append(" : ").append(query).append(
+        "\n");
+    elWriter.append(query).append(" WAS give by user at ").append(LocalDateTime.now().toString()).append("\n");
     elWriter.close();
 
     Matcher createMatch = CREATE_QUERY_FINAL.matcher(query);
@@ -79,19 +92,50 @@ public class QueryParser {
       dropTableWrapper(dbName, truncateMatch);
     } else if (insertMatch.find()) {
       insertWrapper(dbName, insertMatch);
+    } else {
+      System.out.println("Please enter a valid query");
     }
   }
 
-  public void generalLogWriter(String queryType, boolean status, long time) throws IOException {
-    File gl = new File(LOCAL_PATH+"general_logs.txt");
+  public String getDetails(String dbName) throws IOException {
+    StringBuilder data = new StringBuilder();
+    String path = LOCAL_PATH + dbName;
+    File folder = new File(path);
+    File[] files = folder.listFiles();
+    data.append(dbName + " database has " + files.length + " tables. ");
+    for (File file : files) {
+      if (file.getName().indexOf("dataDictionary") < 0 && file.getName().indexOf("lock") < 0) {
+        String content = Files.readString(Path.of(file.getAbsolutePath()), StandardCharsets.US_ASCII);
+        int rows = content.split("\n\r").length;
+        String name = file.getName().substring(0, file.getName().indexOf("."));
+        data.append("Table " + name + " has " + rows + " records. ");
+      }
+    }
+    return data.toString();
+  }
+
+  public void generalLogWriter(String queryType, boolean status, long time, String dbName, String tableName) throws IOException {
+    File gl = new File(LOCAL_PATH + "general_logs.txt");
     if (gl.createNewFile()) {
       System.out.println("Created new General Log File");
     }
     FileWriter glWriter = new FileWriter(gl, true);
     glWriter.append(queryType).append(" QUERY with Status of ").append(String.valueOf(status)).append(" was executed in ").append(String.valueOf(time)).append(" nano seconds").append("\n");
+    glWriter.append("\t").append(getDetails(dbName)).append("\n");
     glWriter.close();
   }
-  public void createWrapper(String dbName,Matcher queryMatcher) throws IOException {
+
+  public void eventLogWriter(String event) throws IOException {
+    File el = new File(LOCAL_PATH + "event_logs.txt");
+    if (el.exists()) {
+
+      FileWriter elWriter = new FileWriter(el, true);
+      elWriter.append(event).append("\n");
+      elWriter.close();
+    }
+  }
+
+  public void createWrapper(String dbName, Matcher queryMatcher) throws IOException {
     // 0 index will have pk and 1 will have FK
     HashMap<String, String> keySet = new HashMap<>();
 
@@ -101,16 +145,16 @@ public class QueryParser {
     ArrayList<String> values = new ArrayList<>();
     String[] colValSet = tableSet.split(",");
 
-    for(String colVal:colValSet){
+    for (String colVal : colValSet) {
       String[] set = colVal.split(" ");
       columns.add(set[0].strip());
       values.add(set[1].strip());
-      if(set.length == 3) {
-        if(set[2].strip().equals("PK")){
-          keySet.put(set[0].strip(),"PK");
+      if (set.length == 3) {
+        if (set[2].strip().equals("PK")) {
+          keySet.put(set[0].strip(), "PK");
         }
-      } else if(set.length > 3){
-        keySet.put(set[0].strip(), set[2].strip() + " " + set[3].strip() + " "+ set[4].strip() + " " + set[5].strip());
+      } else if (set.length > 3) {
+        keySet.put(set[0].strip(), set[2].strip() + " " + set[3].strip() + " " + set[4].strip() + " " + set[5].strip());
       }
     }
 
@@ -119,11 +163,17 @@ public class QueryParser {
     System.out.println(keySet);
     //TODO: Add logs here only
     long startTime = System.nanoTime();
-    boolean status = tb.create(tableName,"DUMMY",dbName,columns,values,keySet);
+    boolean status = tb.create(tableName, "DUMMY", dbName, columns, values, keySet);
     long endTime = System.nanoTime();
     long executionTime = endTime - startTime;
 
-    generalLogWriter("CREATE",status,executionTime);
+    generalLogWriter("CREATE", status, executionTime, dbName, tableName);
+    if (status) {
+      eventLogWriter("SUCCESS: Creation of new table \"" + dbName + "." + tableName + "\"");
+    } else {
+      eventLogWriter("FAILED: Creation of new table \"" + dbName + "." + tableName + "\"");
+    }
+    generalLogWriter("CREATE", status, executionTime, dbName, tableName);
     System.out.println(status);
   }
 
@@ -131,24 +181,29 @@ public class QueryParser {
     String tableName = queryMatcher.group(1);
     ArrayList<String> columns = new ArrayList<>();
     ArrayList<String> values = new ArrayList<>();
-    String colSet=queryMatcher.group(2);
+    String colSet = queryMatcher.group(2);
     String[] cols = colSet.split(",");
 
     String valSet = queryMatcher.group(3);
     String[] vals = valSet.split(",");
 
-    for(String col:cols){
+    for (String col : cols) {
       columns.add(col.strip());
     }
-    for(String val:vals){
+    for (String val : vals) {
       values.add(val.strip());
     }
     long startTime = System.nanoTime();
-    boolean status = tb.insert(tableName,"DUMMY",dbName,columns,values);
+    boolean status = tb.insert(tableName, "DUMMY", dbName, columns, values);
     long endTime = System.nanoTime();
     long executionTime = endTime - startTime;
 
-    generalLogWriter("INSERT",status,executionTime);
+    if (status) {
+      eventLogWriter("SUCCESS: Insertion into table \"" + dbName + "." + tableName + "\"");
+    } else {
+      eventLogWriter("FAILED: Insertion into table \"" + dbName + "." + tableName + "\"");
+    }
+    generalLogWriter("INSERT", status, executionTime, dbName, tableName);
     System.out.println(status);
 
   }
@@ -176,6 +231,8 @@ public class QueryParser {
     tb.select(tableName,dbName,columns,key,conditionColumns,conditionValues);
 
   }
+
+
   public void updateWrapper(String dbName,
                             Matcher updateQueryMatcher) throws IOException {
     System.out.println("Update QUERY format passed");
@@ -183,10 +240,10 @@ public class QueryParser {
 
     String tableName = updateQueryMatcher.group(1);
     String tableSet = updateQueryMatcher.group(2);
-    String conditionSet=updateQueryMatcher.group(10);
+    String conditionSet = updateQueryMatcher.group(10);
     ArrayList<String> columns = new ArrayList<>();
     ArrayList<String> values = new ArrayList<>();
-    if(tableSet.split(", ").length==1){
+    if (tableSet.split(", ").length == 1) {
       columns.add(tableSet.split("=")[0]);
       values.add(tableSet.split("=")[1]);
     }
@@ -195,15 +252,20 @@ public class QueryParser {
       columns.add(colVal.split("=")[0].strip());
       values.add((colVal.split("=")[1]).strip());
     }
-    String conditionColumns=conditionSet.split("=")[0].strip();
-    String conditionValues=conditionSet.split("=")[1].strip();
+    String conditionColumns = conditionSet.split("=")[0].strip();
+    String conditionValues = conditionSet.split("=")[1].strip();
 
     long startTime = System.nanoTime();
-    boolean status = tb.update(tableName,dbName,columns,values,conditionColumns,conditionValues);
+    boolean status = tb.update(tableName, dbName, columns, values, conditionColumns, conditionValues);
     long endTime = System.nanoTime();
     long executionTime = endTime - startTime;
 
-    generalLogWriter("UPDATE",status,executionTime);
+    if (status) {
+      eventLogWriter("SUCCESS: Updating table \"" + dbName + "." + tableName + "\"");
+    } else {
+      eventLogWriter("FAILED: Updating table  \"" + dbName + "." + tableName + "\"");
+    }
+    generalLogWriter("UPDATE", status, executionTime, dbName, tableName);
   }
 
 
@@ -211,20 +273,32 @@ public class QueryParser {
     System.out.println("Truncate QUERY Parser");
     String tableName = truncateMatch.group(1);
     long startTime = System.nanoTime();
-    boolean status = tb.truncate(tableName,dbName);
+    boolean status = tb.truncate(tableName, dbName);
     long endTime = System.nanoTime();
     long executionTime = endTime - startTime;
 
-    generalLogWriter("TRUNCATE TABLE",status,executionTime);
+    if (status) {
+      eventLogWriter("SUCCESS: Truncate table \"" + dbName + "." + tableName + "\"");
+    } else {
+      eventLogWriter("FAILED: Truncate table  \"" + dbName + "." + tableName + "\"");
+    }
+    generalLogWriter("TRUNCATE TABLE", status, executionTime, dbName, tableName);
   }
+
+
   public void dropTableWrapper(String dbName, Matcher dropTableMatch) throws IOException {
     System.out.println("drop QUERY Parser");
     String tableName = dropTableMatch.group(1);
     long startTime = System.nanoTime();
-    boolean status = tb.dropTable(tableName,dbName);
+    boolean status = tb.dropTable(tableName, dbName);
     long endTime = System.nanoTime();
     long executionTime = endTime - startTime;
 
-    generalLogWriter("DROP TABLE",status,executionTime);
+    if (status) {
+      eventLogWriter("SUCCESS: DROP table \"" + dbName + "." + tableName + "\"");
+    } else {
+      eventLogWriter("FAILED: DROP table  \"" + dbName + "." + tableName + "\"");
+    }
+    generalLogWriter("DROP TABLE", status, executionTime, dbName, tableName);
   }
 }
