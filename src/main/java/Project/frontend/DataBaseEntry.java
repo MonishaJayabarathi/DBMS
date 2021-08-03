@@ -8,11 +8,12 @@ import java.util.Scanner;
 
 public class DataBaseEntry {
   public static void main(String[] args) throws IOException {
-    System.out.println("Welcome");
+    System.out.println("Welcome!!");
     while (true) {
       System.out.println("\n1. Register user");
       System.out.println("2. User Log in");
       System.out.println("3. Exit");
+      System.out.println("select an option from above");
       Scanner sc = new Scanner(System.in);
       int input = sc.nextInt();
 

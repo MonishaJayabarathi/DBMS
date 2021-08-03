@@ -62,6 +62,12 @@ public class RegisterUser {
         final String passwordSha256Hash = HashAlgorithmUtil.getSHA256Hash(password);
         password=passwordSha256Hash;
 
+        for(int j=0;j<securityQuestionList.size();j++) {
+            final String securityAnswerHash =
+                HashAlgorithmUtil.getSHA256Hash(securityAnswer.get(j));
+            securityAnswer.set(j, securityAnswerHash);
+        }
+
         FileWriter writer = new FileWriter(LOGIN_CREDENTIALS_FILE, true);
 
         writer.write(username + " "+ password+" "+securityAnswer.get(0)+" "+securityAnswer.get(1)+" "+securityAnswer.get(2)+"\n");
