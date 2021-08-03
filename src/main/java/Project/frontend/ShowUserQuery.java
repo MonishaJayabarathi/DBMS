@@ -2,12 +2,14 @@ package Project.frontend;
 import Project.QueryParser;
 import Project.Table;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Scanner;
 public class ShowUserQuery {
   QueryParser qp = new QueryParser();
+  StringBuilder tr = new StringBuilder();
+  Scanner sc=new Scanner(System.in);
   public void listQuery() throws IOException {
     System.out.println("\nPlease select query number That you want to perform");
-    Scanner sc=new Scanner(System.in);
     Table table=new Table();
     while (true) {
       System.out.println("\n1. EXECUTE QUERY");
@@ -41,7 +43,7 @@ public class ShowUserQuery {
           table.executeDump(dbName);
           break;
         case "5":
-
+          this.queue(qp);
         case "6":
           return;
         default:
@@ -50,19 +52,20 @@ public class ShowUserQuery {
     }
   }
 
-  public void queue () throws IOException {
+  public void queue (QueryParser qp) throws IOException {
     System.out.println("Please enter your transaction queries");
     String del = sc.nextLine();
-    QueryParser qp = new QueryParser();
-    if(del != "commit;") {
+    if(!del.equals("commit;")) {
       tr.append(del+"\n");
-      this.queue();
+      System.out.println("STRING Build is: "+tr);
+      this.queue(qp);
     } else {
       String[] q = tr.toString().split("\n");
+      System.out.println("Q is "+ Arrays.toString(q));
       for(String c: q) {
-        qp.parseQuery("Test", c);
+        qp.parseQuery("Test1", c);
       }
     }
-    qp.parseQuery("Test", "SELECT * FROM Test1");
+    qp.parseQuery("Test1", "SELECT * FROM ADITYA3;");
   }
 }
