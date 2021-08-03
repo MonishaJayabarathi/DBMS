@@ -14,8 +14,9 @@ public class ShowUserQuery {
     Table table=new Table();
     while (true) {
       System.out.println("1. EXECUTE QUERY");
-      System.out.println("2. Export ERD table");
-      System.out.println("9. Exit");
+      System.out.println("2. Export ERD database");
+      System.out.println("3. Export Dumps database");
+      System.out.println("4. Exit");
       System.out.println("Select an option");
       QueryParser qp = new QueryParser();
       final String input = sc.nextLine();
@@ -29,7 +30,7 @@ public class ShowUserQuery {
         case "2":
           table.erd("Test");
         case "3":
-
+          table.dumps("Test");
         case "4":
 
 

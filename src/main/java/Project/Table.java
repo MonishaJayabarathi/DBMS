@@ -1,9 +1,7 @@
 package Project;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static Project.Constants.LOCAL_PATH;
 
@@ -60,12 +58,12 @@ public class Table {
     BufferedReader dataDictReader = new BufferedReader(new FileReader(dataDict));
     String st;
     String nl;
-    while ((st = dataDictReader.readLine()) != null){
-      if(st.length() > 0){
-        if(st.equals(tableName)){
-          while ((nl = dataDictReader.readLine()) != null){
+    while ((st = dataDictReader.readLine()) != null) {
+      if (st.length() > 0) {
+        if (st.equals(tableName)) {
+          while ((nl = dataDictReader.readLine()) != null) {
             String[] tmp = nl.split(" ");
-            if (tmp.length == 3){
+            if (tmp.length == 3) {
               return tmp[0];
             }
           }
@@ -76,7 +74,38 @@ public class Table {
     return null;
   }
 
-  public boolean create(String tableName, String userName, String databaseName, ArrayList<String> columns, ArrayList<String> valuesTypes,HashMap<String,String> keySet) {
+  public ArrayList<String> getLockedFile(String dbName) throws IOException {
+    File file = new File(LOCAL_PATH + dbName + "/lock.txt");
+    FileWriter lockWriter = new FileWriter(file, true);
+    BufferedReader content = new BufferedReader(new FileReader(file));
+    ArrayList<String> lFiles = new ArrayList<>();
+    String st;
+    while ((st = content.readLine()) != null) {
+      lFiles.add(st);
+    }
+    return lFiles;
+  }
+
+  public void setLockFile(String dbName, String tableName, boolean condition) throws IOException {
+    File file = new File(LOCAL_PATH + dbName + "/lock.txt");
+    FileWriter lockWriter = new FileWriter(file);
+    ArrayList<String> lFiles = getLockedFile(dbName);
+    if (condition) {
+      lFiles.add(tableName);
+    } else {
+      lFiles.remove(tableName);
+    }
+    StringBuilder list = new StringBuilder();
+    for (String name : lFiles) {
+      list.append(name);
+    }
+    System.out.println(list.toString());
+    lockWriter.write(list.toString());
+    lockWriter.close();
+  }
+
+
+  public boolean create(String tableName, String userName, String databaseName, ArrayList<String> columns, ArrayList<String> valuesTypes, HashMap<String, String> keySet) {
     // Creating Data dict. inside the database folder
     try {
       File dataDict = new File(LOCAL_PATH + databaseName + "/dataDictionary.txt");
@@ -98,7 +127,7 @@ public class Table {
         dataDictWriter.append(columns.get(i));
         dataDictWriter.append(" ");
         dataDictWriter.append(valuesTypes.get(i));
-        if(keySet.containsKey(columns.get(i))){
+        if (keySet.containsKey(columns.get(i))) {
           dataDictWriter.append(" ");
           dataDictWriter.append(keySet.get(columns.get(i)));
         }
@@ -130,18 +159,17 @@ public class Table {
 
     //TODO: Check for primary key
 
-    String pk = getPrimaryKeyColumn(databaseName,tableName);
-
+    String pk = getPrimaryKeyColumn(databaseName, tableName);
 
 
     if (columns != null) {
       ArrayList<String> colValues = new ArrayList<>();
       File tableFile = new File(LOCAL_PATH + databaseName + "/" + tableName + ".txt");
-      if(pk == null){
+      if (pk == null) {
         System.out.println("No Primary key in database");
-      } else{
+      } else {
         BufferedReader bf = new BufferedReader(new FileReader(tableFile));
-        colValues = getColumn(pk,getRecords(bf));
+        colValues = getColumn(pk, getRecords(bf));
       }
       FileWriter tableFileWriter = new FileWriter(tableFile, true);
       if (!tableFile.exists()) {
@@ -149,12 +177,6 @@ public class Table {
         return false;
       }
       for (int i = 0; i < columns.size(); i++) {
-        if(columns.get(i).equals(pk)){
-          if (colValues.contains(values.get(i))){
-            System.out.println("Same value present in primary key! Sorry.");
-            return false;
-          }
-        }
         tableFileWriter.append(columns.get(i));
         tableFileWriter.append(" ");
         tableFileWriter.append(values.get(i));
@@ -217,79 +239,97 @@ public class Table {
   }
 
   /**
-   * This method updates column value where condition is matched in table.
-   * It can handle simple WHERE clause like WHERE col1=value
+   * This method displays ER Diagram.
+   * The underlined column is the Primary Key. The Bolded column is the Foreign Key.
    *
    * @param tableName
    * @param databaseName
    * @param columns
    * @param values
-   * @return
    * @throws IOException
    */
   public boolean update(String tableName, String databaseName, ArrayList<String> columns,
-                        ArrayList<String> values,String condition, String value) throws IOException {
+                        ArrayList<String> values, String condition, String value) throws IOException {
     // Assuming user will send columnNames along with the query in correct order
     // If column Names are not present send back the error
     // Assuming that user will send all columns
     // Assuming table exist
 
-    String conditionColumn=condition;
-    String conditionValue=value;
+    String conditionColumn = condition;
+    String conditionValue = value;
+    boolean success = false;
     File fileToBeModified = new File(LOCAL_PATH + databaseName + "/" + tableName + ".txt");
     if (!fileToBeModified.exists()) {
       System.out.println("Table Doesn't exist");
       return false;
     }
 
-    BufferedReader reader = new BufferedReader(new FileReader(fileToBeModified));
-    String st;
+    ArrayList<String> lockedFiles = getLockedFile(databaseName);
+    if (!lockedFiles.contains(tableName)) {
+      setLockFile(databaseName, tableName, true);
 
-    HashMap<String, ArrayList<String>> records = new HashMap<>();
-    ArrayList<String> temp;
-    while ((st = reader.readLine()) != null) {
-      if (st.length() > 0) {
-        String[] rec = st.split(" ");
-        if (records.containsKey(rec[0])) {
-          temp = new ArrayList<>(records.get(rec[0]));
-        } else {
-          temp = new ArrayList<>();
-        }
-        temp.add(rec[1]);
-        records.put(rec[0], temp);
-      }
-    }
+      BufferedReader reader = new BufferedReader(new FileReader(fileToBeModified));
+      String st;
 
-    ArrayList<Integer> presentIn = new ArrayList<>();
-    ArrayList<String> col = records.get(conditionColumn);
-    for (int i = 0; i < col.size(); i++) {
-      if (col.get(i).equals(conditionValue)) {
-        presentIn.add(i);
-      }
-    }
-
-    for (Map.Entry<String, ArrayList<String>> ee : records.entrySet()) {
-      temp = ee.getValue();
-      for (int i = 0; i < temp.size(); i++) {
-        if (columns.contains(ee.getKey()) && presentIn.contains(i)) {
-          int index=columns.indexOf(ee.getKey());
-          temp.set(i, values.get(index)) ;
-          records.put(ee.getKey(),temp);
+      HashMap<String, ArrayList<String>> records = new HashMap<>();
+      ArrayList<String> temp;
+      while ((st = reader.readLine()) != null) {
+        if (st.length() > 0) {
+          String[] rec = st.split(" ");
+          if (records.containsKey(rec[0])) {
+            temp = new ArrayList<>(records.get(rec[0]));
+          } else {
+            temp = new ArrayList<>();
+          }
+          temp.add(rec[1]);
+          records.put(rec[0], temp);
         }
       }
-    }
-    FileWriter writer =new FileWriter(fileToBeModified,false);
-    for (int i = 0; i <  records.get(conditionColumn).size(); i++) {
+
+      ArrayList<Integer> presentIn = new ArrayList<>();
+      ArrayList<String> col = records.get(conditionColumn);
+      for (int i = 0; i < col.size(); i++) {
+        if (col.get(i).equals(conditionValue)) {
+          presentIn.add(i);
+        }
+      }
+
       for (Map.Entry<String, ArrayList<String>> ee : records.entrySet()) {
-        String record=ee.getKey()+" "+ee.getValue().get(i)+"\n";
-        writer.write(record);
+        temp = ee.getValue();
+        for (int i = 0; i < temp.size(); i++) {
+          if (columns.contains(ee.getKey()) && presentIn.contains(i)) {
+            int index = columns.indexOf(ee.getKey());
+            temp.set(i, values.get(index));
+            records.put(ee.getKey(), temp);
+          }
+        }
+      }
+      FileWriter writer = new FileWriter(fileToBeModified, false);
+      for (int i = 0; i < records.get(conditionColumn).size(); i++) {
+        for (Map.Entry<String, ArrayList<String>> ee : records.entrySet()) {
+          String record = ee.getKey() + " " + ee.getValue().get(i) + "\n";
+          writer.write(record);
+          writer.flush();
+        }
+        writer.write("\n");
         writer.flush();
       }
-      writer.write("\n");
-      writer.flush();
+      setLockFile(databaseName, tableName, false);
+      System.out.printf("value Updated successfully");
+      success = true;
+    } else {
+      new Timer().schedule(new TimerTask() {
+        @Override
+        public void run() {
+          try {
+            update(tableName, databaseName, columns, values, condition, value);
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        }
+      }, 500);
     }
-    System.out.printf("value Updated successfully");
-    return true;
+    return success;
   }
 
 
@@ -301,7 +341,7 @@ public class Table {
    * @return
    * @throws IOException
    */
-  public boolean truncate(String tableName,String databaseName) throws IOException {
+  public boolean truncate(String tableName, String databaseName) throws IOException {
     File tableFile = new File(LOCAL_PATH + "/" + databaseName + "/" + tableName + ".txt");
     if (!tableFile.exists()) {
       System.out.println("Table Doesn't exist");
@@ -328,6 +368,7 @@ public class Table {
     System.out.println("Table Truncated successfully");
     return true;
   }
+
   /**
    * This Method will delete the table file and records of data in data
    * dictionary file
@@ -337,26 +378,26 @@ public class Table {
    * @return
    * @throws IOException
    */
-  public boolean dropTable(String tableName,String databaseName) throws IOException {
+  public boolean dropTable(String tableName, String databaseName) throws IOException {
     File tableFile = new File(LOCAL_PATH + "/" + databaseName + "/" + tableName + ".txt");
     if (!tableFile.exists()) {
       System.out.println("Table Doesn't exist");
       return false;
-    }else{
+    } else {
       tableFile.delete();
     }
 
     File dataDictionaryFile =
-        new File(LOCAL_PATH + "/" + databaseName + "/"+ "testDataDictionary" +
+        new File(LOCAL_PATH + "/" + databaseName + "/" + "testDataDictionary" +
             ".txt");
     BufferedReader reader = new BufferedReader(new FileReader(dataDictionaryFile));
-    String st,tableKey = null;
+    String st, tableKey = null;
     HashMap<String, ArrayList<String>> records = new HashMap<>();
-    ArrayList<String> temp=null;
+    ArrayList<String> temp = null;
     while ((st = reader.readLine()) != null) {
       if (st.length() > 0) {
-        String [] array = st.trim().split(" ");
-        if (array.length==1) {
+        String[] array = st.trim().split(" ");
+        if (array.length == 1) {
           tableKey = st;
         }
         if (records.containsKey(tableKey)) {
@@ -368,9 +409,9 @@ public class Table {
       }
       records.put(tableKey, temp);
     }
-    FileWriter writer =new FileWriter(dataDictionaryFile,false);
+    FileWriter writer = new FileWriter(dataDictionaryFile, false);
     for (Map.Entry<String, ArrayList<String>> ee : records.entrySet()) {
-      String record="";
+      String record = "";
       if (!ee.getKey().equals(tableName)) {
         temp = ee.getValue();
         for (int i = 0; i < temp.size(); i++) {
@@ -390,7 +431,6 @@ public class Table {
    * This method displays ER Diagram.
    * The underlined column is the Primary Key. The Bolded column is the Foreign Key.
    *
-
    * @param databaseName
    * @throws IOException
    */
@@ -441,5 +481,71 @@ public class Table {
       }
       System.out.println("\n---------------------------------------------------------------------------------");
     }
+  }
+
+  public boolean dumps(String databaseName) throws IOException {
+    String path = LOCAL_PATH + databaseName;
+    File folder = new File(path); //read folder
+    if (!folder.exists()) {
+      System.out.println("Database doesn't exists");
+      return false;
+    }
+    String st;
+    StringBuilder built = new StringBuilder();
+    BufferedReader br;
+    File[] files = folder.listFiles(); // get list of files in folderif (files != null && files.length > 0) {
+    for (File file : files) {
+      if (file.getAbsolutePath().indexOf("dataDictionary.tx") >= 0) {
+        br = new BufferedReader(new FileReader(file.getAbsolutePath()));
+        String create = "";
+        int count = 0;
+        while ((st = br.readLine()) != null) {
+          if (st.length() > 0) {
+            if (count == 0) {
+              create = create + "CREATE table " + st + '(';
+              count = 1;
+            } else {
+              create = create + st + ",";
+            }
+          } else {
+            count = 0;
+            create = create.substring(0, create.length() - 1);
+            create = create + ");";
+            built.append(create).append("\n");
+            create = "";
+          }
+        }
+      } else if (file.getAbsolutePath().indexOf("lock.txt") < 0) {
+        String tablePath = file.getPath().replace("\\", ";");
+        String[] pathSplits = tablePath.split(";");
+        String tableName = pathSplits[pathSplits.length - 1];
+        tableName = tableName.substring(0, tableName.indexOf("."));
+        br = new BufferedReader(new FileReader(file.getAbsolutePath()));
+        String columns = "";
+        String values = "";
+        while ((st = br.readLine()) != null) {
+          if (st.length() > 0) {
+            int index = st.indexOf("\s");
+            columns = columns + st.split("\\s+")[0] + ",";
+            values = values + st.substring(index + 1) + ",";
+          } else {
+            columns = columns.substring(0, columns.length() - 1);
+            values = values.substring(0, values.length() - 1);
+            built.append("INSERT INTO " + tableName + "(" + columns + ") VALUES(" + values + ");\n");
+            columns = "";
+            values = "";
+          }
+        }
+      }
+    }
+    File dumpFile = new File(LOCAL_PATH + databaseName + "/" + "dumps.txt");
+    if (!dumpFile.exists()) {
+      dumpFile.createNewFile();
+    }
+    System.out.println(built);
+    FileWriter dumpFileWriter = new FileWriter(dumpFile);
+    dumpFileWriter.write(built.toString());
+    dumpFileWriter.close();
+    return true;
   }
 }
