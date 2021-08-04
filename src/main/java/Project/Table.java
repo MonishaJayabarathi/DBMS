@@ -210,7 +210,7 @@ public class Table {
   public boolean select(String tableName, String databaseName,
                         ArrayList<String> columns,
                         String key, String condition, String value) throws IOException {
-    File tableFile = new File(LOCAL_PATH + "/" + databaseName + "/" + tableName + ".txt");
+    File tableFile = new File(LOCAL_PATH + databaseName + "/" + tableName + ".txt");
     if (!tableFile.exists()) {
       System.out.println("Table Doesn't exist");
       return false;
@@ -468,7 +468,7 @@ public class Table {
             data.add("\033[4m" + details[0] +
                 "\033[0m" + " " + details[1]);
           } else if (isForeign) {
-            data.add("\033[0;1m" + details[0] + "\033[0;0m" + " " + details[1]);
+            data.add("\033[0;1m" + details[0] + "\033[0;0m" + " " + details[1] + " ref-->" + details[4] );
           } else {
             data.add(details[0] + " " + details[1]);
           }
@@ -479,17 +479,22 @@ public class Table {
         data = new ArrayList<String>();
       }
     }
-    System.out.println("\n*********************************************************************************");
-    System.out.println("*                                ER DIAGRAM                                     *");
-    System.out.println("*********************************************************************************");
+    System.out.println("\n" +
+        "**************************************************************************************************************");
+    System.out.println("*                                ER DIAGRAM                                                  " +
+        "*");
+    System.out.println(
+        "**************************************************************************************************************");
     System.out.println("Table" + "\t\t\t" + "| " + "Columns");
-    System.out.println("---------------------------------------------------------------------------------");
+    System.out.println(
+        "---------------------------------------------------------------------------------------------------------------");
     for (String key : list.keySet()) {
       System.out.print(key + "\t\t\t" + "| ");
       for (String c : list.get(key)) {
         System.out.print(c + "\t\t" + "| ");
       }
-      System.out.println("\n---------------------------------------------------------------------------------");
+      System.out.println("\n" +
+          "-------------------------------------------------------------------------------------------------------------");
     }
     return true;
   }
@@ -527,7 +532,7 @@ public class Table {
           }
         }
       } else if (file.getAbsolutePath().indexOf("lock.txt") < 0) {
-        String tablePath = file.getAbsolutePath().replace("/", ";");
+        String tablePath = file.getAbsolutePath().replace("\\", ";");
         String[] pathSplits = tablePath.split(";");
         String tableName = pathSplits[pathSplits.length - 1];
         tableName = tableName.substring(0, tableName.indexOf("."));

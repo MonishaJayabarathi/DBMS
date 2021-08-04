@@ -58,7 +58,6 @@ public class QueryParser {
   DataBase db = new DataBase();
 
   public String parseQuery(String dbName, String query) throws IOException {
-    System.out.println(db.currentDatabase);
     dbName=db.currentDatabase;
     File ql = new File(LOCAL_PATH + "query_logs.txt");
     File el = new File(LOCAL_PATH + "event_logs.txt");
@@ -99,7 +98,7 @@ public class QueryParser {
     } else if (truncateMatch.find()) {
       truncateWrapper(dbName, truncateMatch);
     } else if (dropTableMatch.find()) {
-      dropTableWrapper(dbName, truncateMatch);
+      dropTableWrapper(dbName, dropTableMatch);
     } else if (insertMatch.find()) {
       insertWrapper(dbName, insertMatch);
     } else if (databaseCreateMatcher.find()) {

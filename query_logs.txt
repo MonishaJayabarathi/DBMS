@@ -119,3 +119,45 @@ UPDATE ADITYA3 SET COL5=v11 WHERE COL3=val2; WAS give by user at 2021-08-03T14:2
 SELECT * FROM ADITYA3; WAS give by user at 2021-08-03T14:22:33.355524165
 SELECT * FROM ADITYA3; WAS give by user at 2021-08-03T14:22:33.360712642
 SELECT * FROM ADITYA3; WAS give by user at 2021-08-03T14:22:33.364753331
+use Student; WAS give by user at 2021-08-04T16:05:13.517421200
+use Student; WAS give by user at 2021-08-04T16:05:24.420357600
+SELECT * FROM student; WAS give by user at 2021-08-04T16:05:55.796787100
+SELECT * FROM student; WAS give by user at 2021-08-04T16:10:39.652844800
+USE Student; WAS give by user at 2021-08-04T16:12:25.662063900
+SELECT * FROM student; WAS give by user at 2021-08-04T16:12:39.180805600
+USE Student; WAS give by user at 2021-08-04T16:13:42.398302900
+SELECT * FROM student; WAS give by user at 2021-08-04T16:13:57.268112100
+USE Student; WAS give by user at 2021-08-04T16:32:49.583286800
+SELECT name FROM student WHERE id=1; WAS give by user at 2021-08-04T16:33:09.582738700
+USE Student; WAS give by user at 2021-08-04T16:34:14.386959200
+SELECT * FROM student; WAS give by user at 2021-08-04T16:34:44.299226200
+SELECT name FROM student; WAS give by user at 2021-08-04T16:35:28.812202100
+SELECT id,name,city WHERE id=1; WAS give by user at 2021-08-04T16:35:59.238871300
+USE Student; WAS give by user at 2021-08-04T16:37:51.348790200
+SELECT * FROM student; WAS give by user at 2021-08-04T16:38:20.918378900
+USE Student; WAS give by user at 2021-08-04T16:39:55.540842900
+SELECT * FROM student; WAS give by user at 2021-08-04T16:40:08.593353800
+SELECT name FROM student; WAS give by user at 2021-08-04T16:40:30.455336500
+SELECT id,name FROM student WHERE id=1; WAS give by user at 2021-08-04T16:41:10.077978300
+SELECT * FROM test; WAS give by user at 2021-08-04T16:41:57.048051300
+SELECT * student; WAS give by user at 2021-08-04T16:42:17.102831300
+SELECT * FROM mark; WAS give by user at 2021-08-04T16:55:12.310544
+CREATE DATABASE Student; WAS give by user at 2021-08-04T17:29:03.512454400
+USE Student; WAS give by user at 2021-08-04T17:29:03.575498300
+CREATE TABLE student (id int PK,name char,city char,contact int); WAS give by user at 2021-08-04T17:29:03.578456900
+CREATE TABLE mark (id int FK REFERENCES student id,totalMark int); WAS give by user at 2021-08-04T17:29:03.598452
+INSERT INTO mark (id,totalMark) VALUES (1,90); WAS give by user at 2021-08-04T17:29:03.615465700
+INSERT INTO mark (id,totalMark) VALUES (2,91); WAS give by user at 2021-08-04T17:29:03.622454700
+INSERT INTO student (id,name,city,contact) VALUES (1,Priya,halifax,9852453652); WAS give by user at 2021-08-04T17:29:03.628453400
+INSERT INTO student (id,name,city,contact) VALUES (2,Monisha,halifax,7812453652); WAS give by user at 2021-08-04T17:29:03.632451700
+SELECT * FROM student; WAS give by user at 2021-08-04T17:37:31.538817300
+SELECT * FROM mark; WAS give by user at 2021-08-04T17:37:31.544817
+SELECT * FROM ADITYA3; WAS give by user at 2021-08-04T17:37:31.548816400
+SELECT * FROM ADITYA3; WAS give by user at 2021-08-04T17:37:31.552814800
+SELECT * FROM ADITYA3; WAS give by user at 2021-08-04T17:37:31.555814100
+USE Student; WAS give by user at 2021-08-04T17:38:23.294723
+SELECT * FROM student; WAS give by user at 2021-08-04T17:39:00.166766300
+SELECT * FROM mark; WAS give by user at 2021-08-04T17:39:00.206704900
+USE Student; WAS give by user at 2021-08-04T17:40:11.387826700
+UPDATE student SET name=Priyaa WHERE id=1; WAS give by user at 2021-08-04T17:42:10.762890900
+SELECT * FROM student; WAS give by user at 2021-08-04T17:42:10.806926

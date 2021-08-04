@@ -57,15 +57,13 @@ public class ShowUserQuery {
     String del = sc.nextLine();
     if(!del.equals("commit;")) {
       tr.append(del+"\n");
-      System.out.println("STRING Build is: "+tr);
       this.queue(qp);
     } else {
       String[] q = tr.toString().split("\n");
       System.out.println("Q is "+ Arrays.toString(q));
       for(String c: q) {
-        qp.parseQuery("Test1", c);
+        qp.parseQuery(null, c);
       }
     }
-    qp.parseQuery("Test1", "SELECT * FROM ADITYA3;");
   }
 }

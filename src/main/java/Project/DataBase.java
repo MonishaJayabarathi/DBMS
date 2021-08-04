@@ -21,8 +21,4 @@ public class DataBase {
   public void use(String name){
     currentDatabase = name;
   }
-
-  public void drop(String name){
-
-  }
 }
