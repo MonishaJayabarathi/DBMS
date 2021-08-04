@@ -7,21 +7,18 @@ import java.io.IOException;
 public class DataBase {
 
   public String currentDatabase;
-  public void create(String name) throws IOException {
+  public boolean create(String name) throws IOException {
+    boolean status = false;
     File databaseFolder = new File(LOCAL_PATH+name);
     if(!databaseFolder.exists()){
-      databaseFolder.mkdirs();
+      status = databaseFolder.mkdirs();
     }
-    File databseLock = new File(LOCAL_PATH + name + "/lock.txt");
-    databseLock.createNewFile();
-
+    File databaseLock = new File(LOCAL_PATH + name + "/lock.txt");
+    databaseLock.createNewFile();
+    return status;
   }
 
   public void use(String name){
     currentDatabase = name;
-  }
-
-  public void drop(String name){
-
   }
 }

@@ -1,1 +1,0 @@
-CREATE QUERY with Status of false was executed in 16318500 nano seconds

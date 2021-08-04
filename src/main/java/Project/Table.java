@@ -177,6 +177,12 @@ public class Table {
         return false;
       }
       for (int i = 0; i < columns.size(); i++) {
+        if(columns.get(i).equals(pk)){
+          if (colValues.contains(values.get(i))){
+            System.out.println("Duplicate value present in PK");
+            return false;
+          }
+        }
         tableFileWriter.append(columns.get(i));
         tableFileWriter.append(" ");
         tableFileWriter.append(values.get(i));
@@ -196,15 +202,15 @@ public class Table {
    * It can handle simple WHERE clause like WHERE col1=value
    *
    * @param tableName
-   * @param userName
    * @param databaseName
    * @param columns
    * @return
    * @throws IOException
    */
-  public boolean select(String tableName, String userName, String databaseName, ArrayList<String> columns,
+  public boolean select(String tableName, String databaseName,
+                        ArrayList<String> columns,
                         String key, String condition, String value) throws IOException {
-    File tableFile = new File(LOCAL_PATH + "/" + databaseName + "/" + tableName + ".txt");
+    File tableFile = new File(LOCAL_PATH + databaseName + "/" + tableName + ".txt");
     if (!tableFile.exists()) {
       System.out.println("Table Doesn't exist");
       return false;
@@ -434,11 +440,15 @@ public class Table {
    * @param databaseName
    * @throws IOException
    */
-  public void erd(String databaseName) throws IOException {
+  public boolean erd(String databaseName) throws IOException {
     HashMap<String, ArrayList<String>> list = new HashMap<String, ArrayList<String>>();
 
     File dataDict = new File(LOCAL_PATH + databaseName + "/dataDictionary.txt");
 
+    if (!dataDict.exists()) {
+      System.out.println("Database doesn't exists");
+      return false;
+    }
     BufferedReader br = new BufferedReader(new FileReader(dataDict));
     String st;
     ArrayList<String> data = new ArrayList<String>();
@@ -458,7 +468,7 @@ public class Table {
             data.add("\033[4m" + details[0] +
                 "\033[0m" + " " + details[1]);
           } else if (isForeign) {
-            data.add("\033[0;1m" + details[0] + "\033[0;0m" + " " + details[1]);
+            data.add("\033[0;1m" + details[0] + "\033[0;0m" + " " + details[1] + " ref-->" + details[4] );
           } else {
             data.add(details[0] + " " + details[1]);
           }
@@ -469,18 +479,24 @@ public class Table {
         data = new ArrayList<String>();
       }
     }
-    System.out.println("\n*********************************************************************************");
-    System.out.println("*                                ER DIAGRAM                                     *");
-    System.out.println("*********************************************************************************");
+    System.out.println("\n" +
+        "**************************************************************************************************************");
+    System.out.println("*                                ER DIAGRAM                                                  " +
+        "*");
+    System.out.println(
+        "**************************************************************************************************************");
     System.out.println("Table" + "\t\t\t" + "| " + "Columns");
-    System.out.println("---------------------------------------------------------------------------------");
+    System.out.println(
+        "---------------------------------------------------------------------------------------------------------------");
     for (String key : list.keySet()) {
       System.out.print(key + "\t\t\t" + "| ");
       for (String c : list.get(key)) {
         System.out.print(c + "\t\t" + "| ");
       }
-      System.out.println("\n---------------------------------------------------------------------------------");
+      System.out.println("\n" +
+          "-------------------------------------------------------------------------------------------------------------");
     }
+    return true;
   }
 
   public boolean dumps(String databaseName) throws IOException {
@@ -493,7 +509,7 @@ public class Table {
     String st;
     StringBuilder built = new StringBuilder();
     BufferedReader br;
-    File[] files = folder.listFiles(); // get list of files in folderif (files != null && files.length > 0) {
+    File[] files = folder.listFiles();
     for (File file : files) {
       if (file.getAbsolutePath().indexOf("dataDictionary.tx") >= 0) {
         br = new BufferedReader(new FileReader(file.getAbsolutePath()));
@@ -502,7 +518,7 @@ public class Table {
         while ((st = br.readLine()) != null) {
           if (st.length() > 0) {
             if (count == 0) {
-              create = create + "CREATE table " + st + '(';
+              create = create + "CREATE TABLE " + st + " (";
               count = 1;
             } else {
               create = create + st + ",";
@@ -516,7 +532,7 @@ public class Table {
           }
         }
       } else if (file.getAbsolutePath().indexOf("lock.txt") < 0) {
-        String tablePath = file.getPath().replace("\\", ";");
+        String tablePath = file.getAbsolutePath().replace("\\", ";");
         String[] pathSplits = tablePath.split(";");
         String tableName = pathSplits[pathSplits.length - 1];
         tableName = tableName.substring(0, tableName.indexOf("."));
@@ -531,21 +547,38 @@ public class Table {
           } else {
             columns = columns.substring(0, columns.length() - 1);
             values = values.substring(0, values.length() - 1);
-            built.append("INSERT INTO " + tableName + "(" + columns + ") VALUES(" + values + ");\n");
+            built.append("INSERT INTO ").append(tableName).append(" (").append(columns).append(") VALUES (").append(values).append(");\n");
             columns = "";
             values = "";
           }
         }
       }
     }
-    File dumpFile = new File(LOCAL_PATH + databaseName + "/" + "dumps.txt");
+    File dumpFile = new File(LOCAL_PATH  + "/" + databaseName + "Dumps.txt");
     if (!dumpFile.exists()) {
       dumpFile.createNewFile();
     }
-    System.out.println(built);
-    FileWriter dumpFileWriter = new FileWriter(dumpFile);
+    FileWriter dumpFileWriter = new FileWriter(dumpFile, true);
     dumpFileWriter.write(built.toString());
     dumpFileWriter.close();
+    return true;
+  }
+
+  public boolean executeDump(String databaseName) throws IOException {
+    QueryParser qp = new QueryParser();
+    File dumpFile = new File(LOCAL_PATH + databaseName + "Dumps.txt");
+    if (!dumpFile.exists()) {
+      System.out.println("Database Dump not generated");
+      return false;
+    }
+    BufferedReader br = new BufferedReader(new FileReader(dumpFile));
+    String st;
+    qp.parseQuery(null,"CREATE DATABASE "+databaseName+";");
+    qp.parseQuery(null,"USE "+databaseName+";");
+    while ((st = br.readLine()) != null) {
+      System.out.println(st);
+      qp.parseQuery(databaseName, st);
+    }
     return true;
   }
 }
